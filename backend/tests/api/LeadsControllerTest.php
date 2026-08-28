@@ -24,7 +24,7 @@ final class LeadsControllerTest extends ApiTestCase
 
     public function testCreateAndBoardStatusMoves(): void
     {
-        $auth = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $auth = $this->actingAs('arjun.rep@brightfield.test');
 
         $id = $this->createQualifiedLead($auth);
 
@@ -34,7 +34,7 @@ final class LeadsControllerTest extends ApiTestCase
 
     public function testConvertCreatesCompanyContactAndDeal(): void
     {
-        $auth = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $auth = $this->actingAs('arjun.rep@brightfield.test');
 
         $id = $this->createQualifiedLead($auth, 'Sam', 'Sam Industries');
 
@@ -54,7 +54,7 @@ final class LeadsControllerTest extends ApiTestCase
 
     public function testConvertingANonQualifiedLeadFails(): void
     {
-        $auth = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $auth = $this->actingAs('arjun.rep@brightfield.test');
 
         $create = $auth->post('api/v1/leads', ['firstName' => 'New', 'lastName' => 'Lead', 'source' => 'OTHER']);
         $id     = json_decode($create->getJSON(), true)['data']['id'];
@@ -66,7 +66,7 @@ final class LeadsControllerTest extends ApiTestCase
 
     public function testDisqualifyRequiresAReason(): void
     {
-        $auth = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $auth = $this->actingAs('arjun.rep@brightfield.test');
 
         $create = $auth->post('api/v1/leads', ['firstName' => 'Bad', 'lastName' => 'Fit', 'source' => 'OTHER']);
         $id     = json_decode($create->getJSON(), true)['data']['id'];

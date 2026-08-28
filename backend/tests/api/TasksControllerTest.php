@@ -11,7 +11,7 @@ final class TasksControllerTest extends ApiTestCase
 {
     public function testCreateAndCompleteATask(): void
     {
-        $auth = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $auth = $this->actingAs('arjun.rep@brightfield.test');
 
         $create = $auth->post('api/v1/tasks', ['subject' => 'Call back Nova', 'priority' => 'HIGH', 'dueDate' => '2026-09-01']);
         $create->assertStatus(201);
@@ -27,8 +27,8 @@ final class TasksControllerTest extends ApiTestCase
 
     public function testDefaultListShowsOnlyMyOpenTasks(): void
     {
-        $auth  = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
-        $meera = $this->withHeaders(['Authorization' => $this->bearerFor('meera.rep@brightfield.test')])->withBodyFormat('json');
+        $auth  = $this->actingAs('arjun.rep@brightfield.test');
+        $meera = $this->actingAs('meera.rep@brightfield.test');
 
         $auth->post('api/v1/tasks', ['subject' => 'Open task', 'priority' => 'LOW']);
         $doneId = json_decode(
@@ -47,8 +47,8 @@ final class TasksControllerTest extends ApiTestCase
 
     public function testTaskLinkedToAnInvisibleRecordIs404(): void
     {
-        $arjun = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
-        $meera = $this->withHeaders(['Authorization' => $this->bearerFor('meera.rep@brightfield.test')])->withBodyFormat('json');
+        $arjun = $this->actingAs('arjun.rep@brightfield.test');
+        $meera = $this->actingAs('meera.rep@brightfield.test');
 
         $companyId = json_decode($meera->post('api/v1/companies', ['name' => "Meera's Co"])->getJSON(), true)['data']['id'];
 

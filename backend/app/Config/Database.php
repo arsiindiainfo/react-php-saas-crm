@@ -35,7 +35,11 @@ class Database extends Config
         'pConnect'     => false,
         'DBDebug'      => true,
         'charset'      => 'utf8mb4',
-        'DBCollat'     => 'utf8mb4_general_ci',
+        // Matches MySQL 8's own default utf8mb4 collation (the migrations
+        // don't override it per table), so comparisons like `WHERE email = ?`
+        // don't hit "Illegal mix of collations" between the connection and
+        // the columns it's comparing against.
+        'DBCollat'     => 'utf8mb4_0900_ai_ci',
         'swapPre'      => '',
         'encrypt'      => false,
         'compress'     => false,

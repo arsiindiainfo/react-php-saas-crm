@@ -6,12 +6,14 @@ use App\Entities\User;
 use App\Exceptions\ValidationException;
 use App\Libraries\ApiResponseTrait;
 use App\Libraries\AuthContext;
+use App\Libraries\ExceptionResponder;
 use App\Libraries\ListQuery;
 use App\Libraries\ListQueryParser;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 /**
  * Thin HTTP layer: run validation, apply the list-query contract for list
@@ -39,6 +41,25 @@ abstract class BaseApiController extends \CodeIgniter\Controller
     protected function authUser(): ?User
     {
         return AuthContext::user();
+    }
+
+    /**
+     * Catches every exception a Controller/Service throws and converts it to
+     * the §13.3 envelope — see ExceptionResponder's docblock for why this
+     * can't be left to the global exception handler alone (PHPUnit feature
+     * tests never let an exception become truly "uncaught").
+     *
+     * @param list<mixed> $params
+     */
+    public function _remap(string $method, ...$params): ResponseInterface
+    {
+        try {
+            $result = $this->{$method}(...$params);
+        } catch (Throwable $e) {
+            return ExceptionResponder::toResponse($e, $this->response);
+        }
+
+        return $result instanceof ResponseInterface ? $result : $this->response;
     }
 
     /**

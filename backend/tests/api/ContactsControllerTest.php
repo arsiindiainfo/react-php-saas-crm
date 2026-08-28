@@ -11,7 +11,7 @@ final class ContactsControllerTest extends ApiTestCase
 {
     public function testCreateContactUnderACompany(): void
     {
-        $auth = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $auth = $this->actingAs('arjun.rep@brightfield.test');
 
         $company   = $auth->post('api/v1/companies', ['name' => 'Contact Co'])->getJSON();
         $companyId = json_decode($company, true)['data']['id'];
@@ -30,7 +30,7 @@ final class ContactsControllerTest extends ApiTestCase
 
     public function testCreateContactUnderMissingCompanyIs404(): void
     {
-        $auth = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $auth = $this->actingAs('arjun.rep@brightfield.test');
 
         $result = $auth->post('api/v1/contacts', [
             'companyId' => 999999,
@@ -44,7 +44,7 @@ final class ContactsControllerTest extends ApiTestCase
 
     public function testListFiltersByCompanyId(): void
     {
-        $auth = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $auth = $this->actingAs('arjun.rep@brightfield.test');
 
         $companyAId = json_decode($auth->post('api/v1/companies', ['name' => 'Company A'])->getJSON(), true)['data']['id'];
         $companyBId = json_decode($auth->post('api/v1/companies', ['name' => 'Company B'])->getJSON(), true)['data']['id'];

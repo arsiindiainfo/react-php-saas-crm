@@ -1,18 +1,19 @@
-# If port 3306/1025/8025 are already taken locally (e.g. an existing XAMPP/WAMP
-# install), either stop that service or remap the left-hand side here and
-# update backend/.env to match.
+# mysql is mapped to host port 3307 (not the default 3306) because this dev
+# machine already has other local/dockerized MySQL instances on 3306 —
+# backend/.env's database.default.port is set to match. If 3307 is also
+# taken, remap the left-hand side here and update backend/.env to match.
 name: arsi-react-php-saas-crm
 
 services:
   mysql:
-    image: mysql:8.0
+    image: mysql:8
     container_name: crm-mysql
     restart: unless-stopped
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: arsi_react_php_saas_crm
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - crm-mysql-data:/var/lib/mysql
     healthcheck:

@@ -28,7 +28,8 @@ class TaskModel extends Model
         $builder = $this->where('id', $id);
 
         if ($ownerScope !== null) {
-            $builder->where('FIND_IN_SET(assigned_to, ?) > 0', [implode(',', $ownerScope)], false);
+            $scopeCsv = $this->db->escape(implode(',', $ownerScope));
+            $builder->where("FIND_IN_SET(assigned_to, {$scopeCsv}) > 0", null, false);
         }
 
         return $builder->first();

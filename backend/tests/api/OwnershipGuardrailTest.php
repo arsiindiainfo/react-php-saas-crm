@@ -17,8 +17,8 @@ final class OwnershipGuardrailTest extends ApiTestCase
 {
     public function testRepCannotSeeAnotherRepsLead(): void
     {
-        $arjun = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
-        $meera = $this->withHeaders(['Authorization' => $this->bearerFor('meera.rep@brightfield.test')])->withBodyFormat('json');
+        $arjun = $this->actingAs('arjun.rep@brightfield.test');
+        $meera = $this->actingAs('meera.rep@brightfield.test');
 
         $create = $arjun->post('api/v1/leads', ['firstName' => 'Owned', 'lastName' => 'ByArjun', 'source' => 'OTHER']);
         $id     = json_decode($create->getJSON(), true)['data']['id'];
@@ -29,8 +29,8 @@ final class OwnershipGuardrailTest extends ApiTestCase
 
     public function testRepCannotSeeAnotherRepsDeal(): void
     {
-        $arjun = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
-        $meera = $this->withHeaders(['Authorization' => $this->bearerFor('meera.rep@brightfield.test')])->withBodyFormat('json');
+        $arjun = $this->actingAs('arjun.rep@brightfield.test');
+        $meera = $this->actingAs('meera.rep@brightfield.test');
 
         $companyId = json_decode($arjun->post('api/v1/companies', ['name' => 'Arjun Deal Co'])->getJSON(), true)['data']['id'];
         $dealId    = json_decode(
@@ -43,8 +43,8 @@ final class OwnershipGuardrailTest extends ApiTestCase
 
     public function testManagerSeesTheirReportsLeadAndDeal(): void
     {
-        $arjun = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
-        $priya = $this->withHeaders(['Authorization' => $this->bearerFor('priya.manager@brightfield.test')])->withBodyFormat('json');
+        $arjun = $this->actingAs('arjun.rep@brightfield.test');
+        $priya = $this->actingAs('priya.manager@brightfield.test');
 
         $leadId = json_decode(
             $arjun->post('api/v1/leads', ['firstName' => 'Team', 'lastName' => 'Lead', 'source' => 'OTHER'])->getJSON(),
@@ -58,8 +58,8 @@ final class OwnershipGuardrailTest extends ApiTestCase
     {
         // Meera has no manager (per UserSeeder) — she doesn't report to Priya,
         // so Priya (Arjun's manager) must not see Meera's records.
-        $meera = $this->withHeaders(['Authorization' => $this->bearerFor('meera.rep@brightfield.test')])->withBodyFormat('json');
-        $priya = $this->withHeaders(['Authorization' => $this->bearerFor('priya.manager@brightfield.test')])->withBodyFormat('json');
+        $meera = $this->actingAs('meera.rep@brightfield.test');
+        $priya = $this->actingAs('priya.manager@brightfield.test');
 
         $leadId = json_decode(
             $meera->post('api/v1/leads', ['firstName' => 'Meera', 'lastName' => 'Only', 'source' => 'OTHER'])->getJSON(),
@@ -72,8 +72,8 @@ final class OwnershipGuardrailTest extends ApiTestCase
 
     public function testAdminSeesEveryonesRecords(): void
     {
-        $arjun = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
-        $admin = $this->withHeaders(['Authorization' => $this->bearerFor('admin@brightfield.test')])->withBodyFormat('json');
+        $arjun = $this->actingAs('arjun.rep@brightfield.test');
+        $admin = $this->actingAs('admin@brightfield.test');
 
         $leadId = json_decode(
             $arjun->post('api/v1/leads', ['firstName' => 'Visible', 'lastName' => 'ToAdmin', 'source' => 'OTHER'])->getJSON(),

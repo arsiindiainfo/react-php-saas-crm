@@ -11,7 +11,7 @@ final class ActivitiesControllerTest extends ApiTestCase
 {
     public function testLogAndListATimeline(): void
     {
-        $auth      = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $auth      = $this->actingAs('arjun.rep@brightfield.test');
         $companyId = json_decode($auth->post('api/v1/companies', ['name' => 'Timeline Co'])->getJSON(), true)['data']['id'];
 
         $auth->post('api/v1/activities', [
@@ -32,8 +32,8 @@ final class ActivitiesControllerTest extends ApiTestCase
 
     public function testCannotLogAgainstAnInvisibleRecord(): void
     {
-        $arjun = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
-        $meera = $this->withHeaders(['Authorization' => $this->bearerFor('meera.rep@brightfield.test')])->withBodyFormat('json');
+        $arjun = $this->actingAs('arjun.rep@brightfield.test');
+        $meera = $this->actingAs('meera.rep@brightfield.test');
 
         $companyId = json_decode($meera->post('api/v1/companies', ['name' => 'Private Co'])->getJSON(), true)['data']['id'];
 

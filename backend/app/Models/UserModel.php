@@ -63,7 +63,7 @@ class UserModel extends Model
     public function directReportIds(int $managerId): array
     {
         return array_map(
-            static fn (array $row) => (int) $row['id'],
+            static fn (User $row) => $row->id,
             $this->select('id')->where('manager_id', $managerId)->findAll(),
         );
     }

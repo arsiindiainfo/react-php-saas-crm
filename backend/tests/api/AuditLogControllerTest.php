@@ -11,8 +11,8 @@ final class AuditLogControllerTest extends ApiTestCase
 {
     public function testAdminSeesAuditTrailAfterActions(): void
     {
-        $rep   = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
-        $admin = $this->withHeaders(['Authorization' => $this->bearerFor('admin@brightfield.test')])->withBodyFormat('json');
+        $rep   = $this->actingAs('arjun.rep@brightfield.test');
+        $admin = $this->actingAs('admin@brightfield.test');
 
         $rep->post('api/v1/companies', ['name' => 'Audited Co']);
 
@@ -26,7 +26,7 @@ final class AuditLogControllerTest extends ApiTestCase
 
     public function testNonAdminCannotReadTheAuditLog(): void
     {
-        $rep = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $rep = $this->actingAs('arjun.rep@brightfield.test');
 
         $rep->get('api/v1/audit-logs')->assertStatus(403);
     }

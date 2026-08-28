@@ -11,7 +11,7 @@ final class CompaniesControllerTest extends ApiTestCase
 {
     public function testCreateAndFetchACompany(): void
     {
-        $auth = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $auth = $this->actingAs('arjun.rep@brightfield.test');
 
         $create = $auth->post('api/v1/companies', ['name' => 'NovaTrail Logistics', 'industry' => 'Logistics']);
         $create->assertStatus(201);
@@ -26,7 +26,7 @@ final class CompaniesControllerTest extends ApiTestCase
 
     public function testDuplicateNameIsRejected(): void
     {
-        $auth = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $auth = $this->actingAs('arjun.rep@brightfield.test');
 
         $auth->post('api/v1/companies', ['name' => 'Acme Co'])->assertStatus(201);
         $second = $auth->post('api/v1/companies', ['name' => 'Acme Co']);
@@ -37,7 +37,7 @@ final class CompaniesControllerTest extends ApiTestCase
 
     public function testListSupportsSearchAndPagination(): void
     {
-        $auth = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $auth = $this->actingAs('arjun.rep@brightfield.test');
 
         foreach (['Alpha Corp', 'Beta Corp', 'Gamma Industries'] as $name) {
             $auth->post('api/v1/companies', ['name' => $name])->assertStatus(201);
@@ -53,8 +53,8 @@ final class CompaniesControllerTest extends ApiTestCase
 
     public function testRepCannotSeeAnotherRepsCompany(): void
     {
-        $arjun = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
-        $meera = $this->withHeaders(['Authorization' => $this->bearerFor('meera.rep@brightfield.test')])->withBodyFormat('json');
+        $arjun = $this->actingAs('arjun.rep@brightfield.test');
+        $meera = $this->actingAs('meera.rep@brightfield.test');
 
         $create = $arjun->post('api/v1/companies', ['name' => "Arjun's Exclusive Co"]);
         $id     = json_decode($create->getJSON(), true)['data']['id'];
@@ -64,8 +64,8 @@ final class CompaniesControllerTest extends ApiTestCase
 
     public function testManagerCanSeeTheirReportsCompany(): void
     {
-        $arjun  = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
-        $priya  = $this->withHeaders(['Authorization' => $this->bearerFor('priya.manager@brightfield.test')])->withBodyFormat('json');
+        $arjun = $this->actingAs('arjun.rep@brightfield.test');
+        $priya = $this->actingAs('priya.manager@brightfield.test');
 
         $create = $arjun->post('api/v1/companies', ['name' => "Arjun's Team Co"]);
         $id     = json_decode($create->getJSON(), true)['data']['id'];
@@ -75,7 +75,7 @@ final class CompaniesControllerTest extends ApiTestCase
 
     public function testUpdateAndDelete(): void
     {
-        $auth   = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $auth   = $this->actingAs('arjun.rep@brightfield.test');
         $create = $auth->post('api/v1/companies', ['name' => 'Delete Me Inc']);
         $id     = json_decode($create->getJSON(), true)['data']['id'];
 

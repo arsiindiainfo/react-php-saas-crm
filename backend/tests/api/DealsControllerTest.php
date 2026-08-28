@@ -22,7 +22,7 @@ final class DealsControllerTest extends ApiTestCase
 
     public function testCreateDealAgainstAnExistingCompany(): void
     {
-        $auth              = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $auth              = $this->actingAs('arjun.rep@brightfield.test');
         [, $dealId]        = $this->createCompanyAndDeal($auth);
 
         $show = $auth->get('api/v1/deals/' . $dealId);
@@ -32,7 +32,7 @@ final class DealsControllerTest extends ApiTestCase
 
     public function testMovingToLostRequiresAReason(): void
     {
-        $auth       = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $auth       = $this->actingAs('arjun.rep@brightfield.test');
         [, $dealId] = $this->createCompanyAndDeal($auth);
 
         $noReason = $auth->post('api/v1/deals/' . $dealId . '/change-stage', ['stage' => 'LOST']);
@@ -45,7 +45,7 @@ final class DealsControllerTest extends ApiTestCase
 
     public function testWinningADealFlipsCompanyToCustomer(): void
     {
-        $auth                = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $auth                = $this->actingAs('arjun.rep@brightfield.test');
         [$companyId, $dealId] = $this->createCompanyAndDeal($auth);
 
         $auth->post('api/v1/deals/' . $dealId . '/change-stage', ['stage' => 'WON'])->assertStatus(200);
@@ -56,7 +56,7 @@ final class DealsControllerTest extends ApiTestCase
 
     public function testAClosedDealCannotChangeStageAgain(): void
     {
-        $auth       = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $auth       = $this->actingAs('arjun.rep@brightfield.test');
         [, $dealId] = $this->createCompanyAndDeal($auth);
 
         $auth->post('api/v1/deals/' . $dealId . '/change-stage', ['stage' => 'WON'])->assertStatus(200);
@@ -68,7 +68,7 @@ final class DealsControllerTest extends ApiTestCase
 
     public function testDeletingACompanyWithOpenDealsIsBlocked(): void
     {
-        $auth                = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $auth                = $this->actingAs('arjun.rep@brightfield.test');
         [$companyId]         = $this->createCompanyAndDeal($auth);
 
         $delete = $auth->delete('api/v1/companies/' . $companyId);

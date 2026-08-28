@@ -69,8 +69,7 @@ final class AuthControllerTest extends ApiTestCase
 
     public function testMeReturnsTheAuthenticatedProfile(): void
     {
-        $result = $this->withHeaders(['Authorization' => $this->bearerFor('admin@brightfield.test')])
-            ->get('api/v1/users/me');
+        $result = $this->actingAs('admin@brightfield.test')->get('api/v1/users/me');
 
         $result->assertStatus(200);
         $body = json_decode($result->getJSON(), true);
@@ -84,8 +83,7 @@ final class AuthControllerTest extends ApiTestCase
 
     public function testAdminCanInviteAUser(): void
     {
-        $result = $this->withHeaders(['Authorization' => $this->bearerFor('admin@brightfield.test')])
-            ->withBodyFormat('json')
+        $result = $this->actingAs('admin@brightfield.test')
             ->post('api/v1/users', [
                 'name'  => 'New Rep',
                 'email' => 'new.rep@brightfield.test',
@@ -99,8 +97,7 @@ final class AuthControllerTest extends ApiTestCase
 
     public function testNonAdminCannotInviteAUser(): void
     {
-        $result = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])
-            ->withBodyFormat('json')
+        $result = $this->actingAs('arjun.rep@brightfield.test')
             ->post('api/v1/users', ['name' => 'X', 'email' => 'x@brightfield.test', 'role' => 'SALES_REP']);
 
         $result->assertStatus(403);

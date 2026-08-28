@@ -17,7 +17,7 @@ final class LeadConvertConcurrencyTest extends ApiTestCase
 {
     public function testOnlyOneOfTwoConcurrentConvertsWins(): void
     {
-        $auth   = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $auth   = $this->actingAs('arjun.rep@brightfield.test');
         $create = $auth->post('api/v1/leads', [
             'firstName' => 'Race', 'lastName' => 'Condition', 'companyName' => 'Race Co', 'source' => 'WEBSITE',
         ]);

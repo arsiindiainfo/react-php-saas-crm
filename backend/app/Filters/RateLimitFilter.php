@@ -3,6 +3,7 @@
 namespace App\Filters;
 
 use App\Exceptions\ApiException;
+use App\Libraries\ExceptionResponder;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -24,10 +25,15 @@ class RateLimitFilter implements FilterInterface
         $count = (int) ($cache->get($key) ?? 0);
 
         if ($count >= $limit) {
-            throw new ApiException('Too many requests. Please try again shortly.', 429, 'RATE_LIMITED');
+            return ExceptionResponder::toResponse(
+                new ApiException('Too many requests. Please try again shortly.', 429, 'RATE_LIMITED'),
+                Services::response(),
+            );
         }
 
         $cache->save($key, $count + 1, 60);
+
+        return null;
     }
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)

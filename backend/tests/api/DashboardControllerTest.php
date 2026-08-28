@@ -11,7 +11,7 @@ final class DashboardControllerTest extends ApiTestCase
 {
     public function testSummaryReflectsWonDealsAndCustomers(): void
     {
-        $auth      = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $auth      = $this->actingAs('arjun.rep@brightfield.test');
         $companyId = json_decode($auth->post('api/v1/companies', ['name' => 'Dashboard Co'])->getJSON(), true)['data']['id'];
         $dealId    = json_decode(
             $auth->post('api/v1/deals', ['companyId' => $companyId, 'name' => 'Big Win', 'valueAmount' => 2500])->getJSON(),
@@ -29,7 +29,7 @@ final class DashboardControllerTest extends ApiTestCase
 
     public function testPipelineByStageReport(): void
     {
-        $auth      = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
+        $auth      = $this->actingAs('arjun.rep@brightfield.test');
         $companyId = json_decode($auth->post('api/v1/companies', ['name' => 'Pipeline Co'])->getJSON(), true)['data']['id'];
         $auth->post('api/v1/deals', ['companyId' => $companyId, 'name' => 'Deal 1', 'valueAmount' => 100]);
 
@@ -43,8 +43,8 @@ final class DashboardControllerTest extends ApiTestCase
 
     public function testOnlyManagersAndAdminsSeeTheLeaderboard(): void
     {
-        $rep     = $this->withHeaders(['Authorization' => $this->bearerFor('arjun.rep@brightfield.test')])->withBodyFormat('json');
-        $manager = $this->withHeaders(['Authorization' => $this->bearerFor('priya.manager@brightfield.test')])->withBodyFormat('json');
+        $rep     = $this->actingAs('arjun.rep@brightfield.test');
+        $manager = $this->actingAs('priya.manager@brightfield.test');
 
         $rep->get('api/v1/reports/salesperson-performance')->assertStatus(403);
         $manager->get('api/v1/reports/salesperson-performance')->assertStatus(200);

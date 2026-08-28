@@ -28,7 +28,8 @@ class LeadModel extends Model
         $builder = $this->where('id', $id);
 
         if ($ownerScope !== null) {
-            $builder->where('FIND_IN_SET(owner_id, ?) > 0', [implode(',', $ownerScope)], false);
+            $scopeCsv = $this->db->escape(implode(',', $ownerScope));
+            $builder->where("FIND_IN_SET(owner_id, {$scopeCsv}) > 0", null, false);
         }
 
         return $builder->first();
