@@ -2,6 +2,10 @@
 
 namespace Config;
 
+use App\Filters\JwtAuthFilter;
+use App\Filters\OwnershipScopeFilter;
+use App\Filters\RateLimitFilter;
+use App\Filters\RoleFilter;
 use CodeIgniter\Config\Filters as BaseFilters;
 use CodeIgniter\Filters\Cors;
 use CodeIgniter\Filters\CSRF;
@@ -34,6 +38,10 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
+        'jwtAuth'       => JwtAuthFilter::class,
+        'ownershipScope' => OwnershipScopeFilter::class,
+        'role'          => RoleFilter::class,
+        'rateLimit'     => RateLimitFilter::class,
     ];
 
     /**
@@ -72,6 +80,7 @@ class Filters extends BaseFilters
      */
     public array $globals = [
         'before' => [
+            'cors',
             // 'honeypot',
             // 'csrf',
             // 'invalidchars',

@@ -1,0 +1,33 @@
+# If port 3306/1025/8025 are already taken locally (e.g. an existing XAMPP/WAMP
+# install), either stop that service or remap the left-hand side here and
+# update backend/.env to match.
+name: arsi-react-php-saas-crm
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: crm-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: arsi_react_php_saas_crm
+    ports:
+      - "3306:3306"
+    volumes:
+      - crm-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: crm-mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  crm-mysql-data:
