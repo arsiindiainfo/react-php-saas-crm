@@ -11,7 +11,8 @@ final class DealsControllerTest extends ApiTestCase
 {
     private function createCompanyAndDeal($auth): array
     {
-        $companyId = json_decode($auth->post('api/v1/companies', ['name' => 'Deal Target Inc'])->getJSON(), true)['data']['id'];
+        // unique per call — this helper runs multiple times against one shared test database (ApiTestCase migrates/seeds once per run)
+        $companyId = json_decode($auth->post('api/v1/companies', ['name' => 'Deal Target Inc ' . uniqid()])->getJSON(), true)['data']['id'];
         $dealId    = json_decode(
             $auth->post('api/v1/deals', ['companyId' => $companyId, 'name' => 'Big Deal', 'valueAmount' => 1000])->getJSON(),
             true,

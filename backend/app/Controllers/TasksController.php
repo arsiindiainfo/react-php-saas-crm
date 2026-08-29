@@ -4,7 +4,9 @@ namespace App\Controllers;
 
 use App\Libraries\AuthContext;
 use App\Services\TaskService;
+use OpenApi\Attributes as OA;
 
+#[OA\Tag(name: 'Tasks')]
 class TasksController extends BaseApiController
 {
     private TaskService $tasks;
@@ -16,6 +18,28 @@ class TasksController extends BaseApiController
         $this->tasks = new TaskService();
     }
 
+    #[OA\Post(
+        path: '/tasks',
+        summary: 'Create a task',
+        tags: ['Tasks'],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(required: true, content: new OA\JsonContent(
+            required: ['subject', 'priority'],
+            properties: [
+                new OA\Property(property: 'subject', type: 'string', maxLength: 200),
+                new OA\Property(property: 'dueDate', type: 'string', format: 'date', nullable: true),
+                new OA\Property(property: 'priority', type: 'string', enum: ['LOW', 'MEDIUM', 'HIGH']),
+                new OA\Property(property: 'relatedToType', type: 'string', enum: ['COMPANY', 'CONTACT', 'LEAD', 'DEAL'], nullable: true),
+                new OA\Property(property: 'relatedToId', type: 'integer', nullable: true),
+                new OA\Property(property: 'assignedTo', type: 'integer', nullable: true, description: 'Defaults to the caller; a manager may assign to a report'),
+            ],
+        )),
+        responses: [
+            new OA\Response(response: 201, description: 'Task created'),
+            new OA\Response(response: 400, description: 'VALIDATION_ERROR', content: new OA\JsonContent(ref: '#/components/schemas/ErrorEnvelope')),
+            new OA\Response(response: 404, description: 'The related record does not exist or isn\'t visible to the caller', content: new OA\JsonContent(ref: '#/components/schemas/ErrorEnvelope')),
+        ],
+    )]
     public function create()
     {
         $data = $this->validateBody('taskCreate');
@@ -34,6 +58,22 @@ class TasksController extends BaseApiController
         return $this->created($task);
     }
 
+    #[OA\Get(
+        path: '/tasks',
+        summary: 'List tasks — defaults to the caller\'s own open tasks, due soonest first (§22.7)',
+        tags: ['Tasks'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'page', in: 'query', schema: new OA\Schema(type: 'integer', default: 1)),
+            new OA\Parameter(name: 'limit', in: 'query', schema: new OA\Schema(type: 'integer', default: 20)),
+            new OA\Parameter(name: 'search', in: 'query', schema: new OA\Schema(type: 'string')),
+            new OA\Parameter(name: 'sort', in: 'query', schema: new OA\Schema(type: 'string', enum: self::SORTABLE)),
+            new OA\Parameter(name: 'direction', in: 'query', schema: new OA\Schema(type: 'string', enum: ['asc', 'desc'])),
+            new OA\Parameter(name: 'assignedTo', in: 'query', schema: new OA\Schema(type: 'integer'), description: 'Defaults to the caller'),
+            new OA\Parameter(name: 'status', in: 'query', schema: new OA\Schema(type: 'string', enum: ['OPEN', 'DONE', 'ALL'], default: 'OPEN')),
+        ],
+        responses: [new OA\Response(response: 200, description: 'Paginated, ownership-scoped list of tasks')],
+    )]
     public function index()
     {
         $query      = $this->parseListQuery(self::SORTABLE, 'dueDate');
@@ -55,11 +95,41 @@ class TasksController extends BaseApiController
         return $this->okPaginated($result['rows'], $query->page, $query->limit, $result['total']);
     }
 
+    #[OA\Get(
+        path: '/tasks/{id}',
+        summary: 'Task detail',
+        tags: ['Tasks'],
+        security: [['bearerAuth' => []]],
+        parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        responses: [
+            new OA\Response(response: 200, description: 'The task'),
+            new OA\Response(response: 404, description: 'TASK_NOT_FOUND', content: new OA\JsonContent(ref: '#/components/schemas/ErrorEnvelope')),
+        ],
+    )]
     public function show($id)
     {
         return $this->ok($this->tasks->getTask((int) $id, AuthContext::ownerScope()));
     }
 
+    #[OA\Put(
+        path: '/tasks/{id}',
+        summary: 'Edit a task',
+        tags: ['Tasks'],
+        security: [['bearerAuth' => []]],
+        parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        requestBody: new OA\RequestBody(content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'subject', type: 'string'),
+                new OA\Property(property: 'dueDate', type: 'string', format: 'date', nullable: true),
+                new OA\Property(property: 'priority', type: 'string', enum: ['LOW', 'MEDIUM', 'HIGH']),
+                new OA\Property(property: 'assignedTo', type: 'integer'),
+            ],
+        )),
+        responses: [
+            new OA\Response(response: 200, description: 'Updated task'),
+            new OA\Response(response: 404, description: 'TASK_NOT_FOUND', content: new OA\JsonContent(ref: '#/components/schemas/ErrorEnvelope')),
+        ],
+    )]
     public function update($id)
     {
         $data = $this->validateBody('taskUpdate');
@@ -74,6 +144,17 @@ class TasksController extends BaseApiController
         return $this->ok($this->tasks->updateTask((int) $id, $fields, AuthContext::ownerScope()));
     }
 
+    #[OA\Post(
+        path: '/tasks/{id}/complete',
+        summary: 'Mark a task done (idempotent)',
+        tags: ['Tasks'],
+        security: [['bearerAuth' => []]],
+        parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        responses: [
+            new OA\Response(response: 200, description: 'Task marked complete (or already was — same response either way)'),
+            new OA\Response(response: 404, description: 'TASK_NOT_FOUND', content: new OA\JsonContent(ref: '#/components/schemas/ErrorEnvelope')),
+        ],
+    )]
     public function complete($id)
     {
         return $this->ok($this->tasks->completeTask((int) $id, AuthContext::ownerScope(), $this->authUser()->id));

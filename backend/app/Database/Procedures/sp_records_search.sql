@@ -28,8 +28,6 @@ sp_records_search: BEGIN
   SET @v_stage     = p_stage;
   SET @v_companyId = p_company_id;
   SET @v_assignee  = p_assigned_to;
-  SET @v_limit     = p_limit;
-  SET @v_offset    = v_offset;
 
   IF p_entity_name = 'companies' THEN
     SET v_sort_col = CASE p_sort
@@ -50,7 +48,7 @@ sp_records_search: BEGIN
       ' AND (@v_status IS NULL OR status = @v_status)',
       ' AND (@v_search = \'\' OR name LIKE @v_like OR industry LIKE @v_like)',
       ' ORDER BY ', v_sort_col, ' ', v_direction,
-      ' LIMIT @v_limit OFFSET @v_offset');
+      ' LIMIT ', p_limit, ' OFFSET ', v_offset);
     PREPARE stmt FROM @v_sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 
   ELSEIF p_entity_name = 'contacts' THEN
@@ -72,7 +70,7 @@ sp_records_search: BEGIN
       ' AND (@v_companyId IS NULL OR company_id = @v_companyId)',
       ' AND (@v_search = \'\' OR first_name LIKE @v_like OR last_name LIKE @v_like OR email LIKE @v_like)',
       ' ORDER BY ', v_sort_col, ' ', v_direction,
-      ' LIMIT @v_limit OFFSET @v_offset');
+      ' LIMIT ', p_limit, ' OFFSET ', v_offset);
     PREPARE stmt FROM @v_sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 
   ELSEIF p_entity_name = 'leads' THEN
@@ -95,7 +93,7 @@ sp_records_search: BEGIN
       ' AND (@v_status IS NULL OR status = @v_status)',
       ' AND (@v_search = \'\' OR first_name LIKE @v_like OR last_name LIKE @v_like OR email LIKE @v_like OR company_name LIKE @v_like)',
       ' ORDER BY ', v_sort_col, ' ', v_direction,
-      ' LIMIT @v_limit OFFSET @v_offset');
+      ' LIMIT ', p_limit, ' OFFSET ', v_offset);
     PREPARE stmt FROM @v_sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 
   ELSEIF p_entity_name = 'deals' THEN
@@ -119,7 +117,7 @@ sp_records_search: BEGIN
       ' AND (@v_companyId IS NULL OR company_id = @v_companyId)',
       ' AND (@v_search = \'\' OR name LIKE @v_like)',
       ' ORDER BY ', v_sort_col, ' ', v_direction,
-      ' LIMIT @v_limit OFFSET @v_offset');
+      ' LIMIT ', p_limit, ' OFFSET ', v_offset);
     PREPARE stmt FROM @v_sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 
   ELSEIF p_entity_name = 'tasks' THEN
@@ -143,7 +141,7 @@ sp_records_search: BEGIN
       ' AND (@v_status IS NULL OR (@v_status = \'OPEN\' AND completed_at IS NULL) OR (@v_status = \'DONE\' AND completed_at IS NOT NULL))',
       ' AND (@v_search = \'\' OR subject LIKE @v_like)',
       ' ORDER BY ', v_sort_col, ' ', v_direction,
-      ' LIMIT @v_limit OFFSET @v_offset');
+      ' LIMIT ', p_limit, ' OFFSET ', v_offset);
     PREPARE stmt FROM @v_sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 
   ELSE

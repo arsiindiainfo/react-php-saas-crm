@@ -10,6 +10,9 @@ $routes->group('api/v1', ['namespace' => 'App\Controllers'], static function ($r
     $routes->post('auth/refresh', 'AuthController::refresh');
 });
 
+// Generated OpenAPI spec (§26) — non-production only, see OpenApiController.
+$routes->get('api/docs', 'OpenApiController::index', ['namespace' => 'App\Controllers']);
+
 // Everything else requires a valid access token; OwnershipScopeFilter always
 // runs right after so every Controller can rely on AuthContext::ownerScope().
 $routes->group(

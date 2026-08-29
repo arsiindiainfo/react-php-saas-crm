@@ -38,11 +38,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     const refreshToken = tokenStore.getRefreshToken()
-    tokenStore.clear()
-    setUser(null)
     if (refreshToken) {
       await apiClient.post('/auth/logout', { refreshToken }).catch(() => undefined)
     }
+    tokenStore.clear()
+    setUser(null)
   }, [])
 
   return <AuthContext value={{ user, isLoading, login, logout }}>{children}</AuthContext>
