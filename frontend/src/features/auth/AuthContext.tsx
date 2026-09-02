@@ -6,7 +6,7 @@ import type { User } from '@/types/entities'
 interface AuthContextValue {
   user: User | null
   isLoading: boolean
-  login: (email: string, password: string) => Promise<void>
+  login: (email: string, password: string, recaptchaToken: string) => Promise<void>
   logout: () => Promise<void>
 }
 
@@ -29,8 +29,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => setIsLoading(false))
   }, [])
 
-  const login = useCallback(async (email: string, password: string) => {
-    const res = await apiClient.post('/auth/login', { email, password })
+  const login = useCallback(async (email: string, password: string, recaptchaToken: string) => {
+    const res = await apiClient.post('/auth/login', { email, password, recaptchaToken })
     const { accessToken, refreshToken, user: loggedInUser } = res.data.data
     tokenStore.setTokens(accessToken, refreshToken)
     setUser(loggedInUser)

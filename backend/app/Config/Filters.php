@@ -5,6 +5,7 @@ namespace Config;
 use App\Filters\JwtAuthFilter;
 use App\Filters\OwnershipScopeFilter;
 use App\Filters\RateLimitFilter;
+use App\Filters\RecaptchaFilter;
 use App\Filters\RoleFilter;
 use CodeIgniter\Config\Filters as BaseFilters;
 use CodeIgniter\Filters\Cors;
@@ -42,6 +43,7 @@ class Filters extends BaseFilters
         'ownershipScope' => OwnershipScopeFilter::class,
         'role'          => RoleFilter::class,
         'rateLimit'     => RateLimitFilter::class,
+        'recaptcha'     => RecaptchaFilter::class,
     ];
 
     /**

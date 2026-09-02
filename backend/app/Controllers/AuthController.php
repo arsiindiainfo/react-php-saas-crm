@@ -20,17 +20,19 @@ class AuthController extends BaseApiController
         summary: 'Authenticate with email + password',
         tags: ['Auth'],
         requestBody: new OA\RequestBody(required: true, content: new OA\JsonContent(
-            required: ['email', 'password'],
+            required: ['email', 'password', 'recaptchaToken'],
             properties: [
                 new OA\Property(property: 'email', type: 'string', format: 'email'),
                 new OA\Property(property: 'password', type: 'string'),
+                new OA\Property(property: 'recaptchaToken', type: 'string', description: 'Google reCAPTCHA v2 response token'),
             ],
         )),
         responses: [
             new OA\Response(response: 200, description: 'Access/refresh tokens + user profile'),
-            new OA\Response(response: 400, description: 'VALIDATION_ERROR', content: new OA\JsonContent(ref: '#/components/schemas/ErrorEnvelope')),
+            new OA\Response(response: 400, description: 'VALIDATION_ERROR, RECAPTCHA_REQUIRED, or RECAPTCHA_FAILED', content: new OA\JsonContent(ref: '#/components/schemas/ErrorEnvelope')),
             new OA\Response(response: 401, description: 'UNAUTHORIZED — invalid credentials or disabled account', content: new OA\JsonContent(ref: '#/components/schemas/ErrorEnvelope')),
             new OA\Response(response: 429, description: 'RATE_LIMITED — 10/min/IP', content: new OA\JsonContent(ref: '#/components/schemas/ErrorEnvelope')),
+            new OA\Response(response: 503, description: 'RECAPTCHA_UNAVAILABLE — could not reach Google to verify', content: new OA\JsonContent(ref: '#/components/schemas/ErrorEnvelope')),
         ],
     )]
     public function login()

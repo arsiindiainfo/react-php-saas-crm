@@ -1,3 +1,5 @@
+![Arsi India Info](./docs/arsi-logo.png)
+
 # React + PHP SaaS CRM
 
 A small-business CRM — companies, contacts, a lead pipeline with real

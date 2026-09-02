@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '@/features/auth/AuthContext'
+import arsiLogo from '@/assets/arsi-logo.png'
 
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Dashboard' },
@@ -23,6 +24,9 @@ export function Layout() {
     <div className="flex min-h-screen">
       <aside className="w-56 shrink-0 bg-gray-900 text-gray-200">
         <div className="border-b border-white/10 px-5 py-4">
+          <div className="mb-2 inline-block rounded-md bg-white px-2 py-1.5">
+            <img src={arsiLogo} alt="Arsi India Info" className="h-6 w-auto" />
+          </div>
           <div className="text-sm font-bold text-white">Arsi CRM</div>
           <div className="text-xs text-gray-400">Brightfield Business Solutions</div>
         </div>

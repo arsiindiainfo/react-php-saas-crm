@@ -6,7 +6,7 @@ use CodeIgniter\Router\RouteCollection;
 
 // Public — no auth required (§12.1)
 $routes->group('api/v1', ['namespace' => 'App\Controllers'], static function ($routes): void {
-    $routes->post('auth/login', 'AuthController::login', ['filter' => 'rateLimit:10']);
+    $routes->post('auth/login', 'AuthController::login', ['filter' => ['rateLimit:10', 'recaptcha']]);
     $routes->post('auth/refresh', 'AuthController::refresh');
 });
 
