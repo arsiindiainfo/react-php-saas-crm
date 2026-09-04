@@ -1,0 +1,18 @@
+# Production compose file — run on the EC2 server, NOT for local dev
+# (use docker-compose.yml for local dev's throwaway mysql/mailhog).
+#
+# network_mode: host lets this container reach the server's existing native
+# MySQL at 127.0.0.1:3306 directly, using the same arsiuser credentials
+# already granted — no bridge-subnet routing or extra MySQL grants needed.
+name: arsi-react-php-saas-crm-prod
+
+services:
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: crm-backend
+    restart: unless-stopped
+    network_mode: "host"
+    env_file:
+      - ../backend/.env
