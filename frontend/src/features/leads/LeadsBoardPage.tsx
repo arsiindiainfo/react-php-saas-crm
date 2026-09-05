@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Users, UserPlus2, Clock, CheckCircle2, XCircle } from 'lucide-react'
+import { Users, UserPlus2, Phone, CheckCircle2, XCircle } from 'lucide-react'
 import { KanbanBoard, type KanbanColumn } from '@/components/KanbanBoard'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { PageSpinner } from '@/components/Spinner'
@@ -44,13 +44,15 @@ export function LeadsBoardPage() {
     headerRight: <span className="text-xs font-bold">{itemsByColumn[status]?.length ?? 0}</span>,
   }))
 
-  // Every status is counted here so the cards reconcile exactly with "Total Leads".
+  // Each card below mirrors one board column exactly (§10) — "Total Leads" comes
+  // from the API's meta.total (the true count), not the page's row count, since
+  // a large lead list would otherwise under-report once it spans multiple pages.
   const allLeads = data?.data ?? []
   const stats = {
-    total: allLeads.length,
+    total: data?.meta.total ?? allLeads.length,
     new: allLeads.filter((l) => l.status === 'NEW').length,
-    inProgress: allLeads.filter((l) => l.status === 'CONTACTED' || l.status === 'QUALIFIED').length,
-    converted: allLeads.filter((l) => l.status === 'CONVERTED').length,
+    contacted: allLeads.filter((l) => l.status === 'CONTACTED').length,
+    qualified: allLeads.filter((l) => l.status === 'QUALIFIED').length,
     disqualified: allLeads.filter((l) => l.status === 'DISQUALIFIED').length,
   }
 
@@ -101,8 +103,8 @@ export function LeadsBoardPage() {
       <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         <StatCard label="Total Leads" value={String(stats.total)} icon={Users} tone="indigo" />
         <StatCard label="New Leads" value={String(stats.new)} icon={UserPlus2} tone="blue" />
-        <StatCard label="In Progress" value={String(stats.inProgress)} icon={Clock} tone="orange" />
-        <StatCard label="Converted" value={String(stats.converted)} icon={CheckCircle2} tone="green" />
+        <StatCard label="Contacted" value={String(stats.contacted)} icon={Phone} tone="orange" />
+        <StatCard label="Qualified" value={String(stats.qualified)} icon={CheckCircle2} tone="green" />
         <StatCard label="Disqualified" value={String(stats.disqualified)} icon={XCircle} tone="gray" />
       </div>
 
