@@ -20,4 +20,10 @@ export default defineConfig({
       },
     },
   },
+  test: {
+    // e2e/ holds Playwright specs, driven by `npm run e2e` — Vitest's default
+    // glob otherwise picks them up too and fails ("test() called here" from
+    // the wrong test runner).
+    exclude: ['e2e/**', 'node_modules/**'],
+  },
 })

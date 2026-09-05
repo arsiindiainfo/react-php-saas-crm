@@ -2,16 +2,17 @@ import { useParams, Link } from 'react-router-dom'
 import { useDeal } from './api'
 import { Pill } from '@/components/Pill'
 import { ActivityTimeline } from '@/components/ActivityTimeline'
+import { PageSpinner } from '@/components/Spinner'
 
 export function DealDetailPage() {
   const { id } = useParams()
   const { data: deal, isLoading } = useDeal(Number(id))
 
-  if (isLoading || !deal) return <p className="text-sm text-gray-400">Loading…</p>
+  if (isLoading || !deal) return <PageSpinner />
 
   return (
     <div className="mx-auto max-w-3xl">
-      <Link to="/deals" className="text-sm text-blue-600">
+      <Link to="/deals" className="text-sm text-indigo-600">
         ← Back to Pipeline
       </Link>
       <div className="mt-2 mb-6 flex items-center gap-3">
@@ -26,7 +27,7 @@ export function DealDetailPage() {
         </div>
         <div>
           <div className="text-xs font-semibold uppercase text-gray-400">Company</div>
-          <Link to={`/companies/${deal.companyId}`} className="mt-1 block text-blue-600">
+          <Link to={`/companies/${deal.companyId}`} className="mt-1 block text-indigo-600">
             View company
           </Link>
         </div>

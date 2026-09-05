@@ -26,11 +26,11 @@ export function CompaniesListPage() {
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-lg font-bold text-gray-900">Companies</h1>
         <button
           onClick={() => setIsCreating(true)}
-          className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+          className="self-start rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-700 sm:self-auto"
         >
           + New Company
         </button>
@@ -62,14 +62,14 @@ export function CompaniesListPage() {
           search ? (
             <>
               <p className="font-medium text-gray-700">No companies match your search</p>
-              <button onClick={() => setSearch('')} className="mt-1 text-sm text-blue-600">
+              <button onClick={() => setSearch('')} className="mt-1 text-sm text-indigo-600">
                 Clear search
               </button>
             </>
           ) : (
             <>
               <p className="font-medium text-gray-700">You haven't added any companies yet</p>
-              <button onClick={() => setIsCreating(true)} className="mt-1 text-sm text-blue-600">
+              <button onClick={() => setIsCreating(true)} className="mt-1 text-sm text-indigo-600">
                 Add your first company
               </button>
             </>

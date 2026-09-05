@@ -31,11 +31,11 @@ export function ContactsListPage() {
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-lg font-bold text-gray-900">Contacts</h1>
         <button
           onClick={() => setIsCreating(true)}
-          className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+          className="self-start rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-700 sm:self-auto"
         >
           + New Contact
         </button>
@@ -60,7 +60,7 @@ export function ContactsListPage() {
         emptyState={
           <>
             <p className="font-medium text-gray-700">You haven't added any contacts yet</p>
-            <button onClick={() => setIsCreating(true)} className="mt-1 text-sm text-blue-600">
+            <button onClick={() => setIsCreating(true)} className="mt-1 text-sm text-indigo-600">
               Add your first contact
             </button>
           </>

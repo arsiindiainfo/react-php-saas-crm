@@ -76,7 +76,7 @@ export function LoginPage() {
               id="email"
               type="email"
               autoComplete="username"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
               {...register('email')}
             />
             {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>}
@@ -90,7 +90,7 @@ export function LoginPage() {
               id="password"
               type="password"
               autoComplete="current-password"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
               {...register('password')}
             />
             {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>}
@@ -114,7 +114,7 @@ export function LoginPage() {
           <button
             type="submit"
             disabled={isSubmitting || (!!RECAPTCHA_SITE_KEY && !recaptchaToken)}
-            className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60"
+            className="w-full rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-60"
           >
             {isSubmitting ? 'Signing in…' : 'Sign in'}
           </button>
@@ -133,7 +133,7 @@ export function LoginPage() {
                   className="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-xs hover:bg-gray-50"
                 >
                   <span className="text-gray-500">{account.role}</span>
-                  <span className="font-medium text-blue-600">{account.email}</span>
+                  <span className="font-medium text-indigo-600">{account.email}</span>
                 </button>
               </li>
             ))}

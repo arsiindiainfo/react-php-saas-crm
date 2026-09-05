@@ -46,7 +46,7 @@ export function ConfirmDialog({
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               rows={2}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
             />
           </div>
         )}
@@ -64,7 +64,7 @@ export function ConfirmDialog({
             disabled={!canConfirm || isSubmitting}
             onClick={() => onConfirm(requireReason ? reason.trim() : undefined)}
             className={`rounded-md px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-50 ${
-              danger ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'
+              danger ? 'bg-red-600 hover:bg-red-700' : 'bg-indigo-600 hover:bg-indigo-700'
             }`}
           >
             {isSubmitting ? 'Working…' : confirmLabel}

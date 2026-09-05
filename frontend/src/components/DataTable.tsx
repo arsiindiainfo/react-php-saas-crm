@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { PageSpinner } from './Spinner'
 
 export interface Column<T> {
   key: string
@@ -42,10 +43,8 @@ export function DataTable<T>({
 
   if (isLoading) {
     return (
-      <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-12 animate-pulse border-b border-gray-100 bg-gray-50 last:border-0" />
-        ))}
+      <div className="rounded-lg border border-gray-200 bg-white">
+        <PageSpinner />
       </div>
     )
   }

@@ -1,13 +1,14 @@
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { useAuth } from '@/features/auth/AuthContext'
+import { Spinner } from '@/components/Spinner'
 import { usePipelineByStage, useMonthlySales, useSalespersonPerformance } from './api'
 
 export function ReportsPage() {
   const { user } = useAuth()
   const canSeeLeaderboard = user?.role === 'ADMIN' || user?.role === 'SALES_MANAGER'
-  const { data: pipeline } = usePipelineByStage()
-  const { data: monthly } = useMonthlySales()
-  const { data: performance } = useSalespersonPerformance(canSeeLeaderboard)
+  const { data: pipeline, isLoading: isPipelineLoading } = usePipelineByStage()
+  const { data: monthly, isLoading: isMonthlyLoading } = useMonthlySales()
+  const { data: performance, isLoading: isPerformanceLoading } = useSalespersonPerformance(canSeeLeaderboard)
 
   return (
     <div>
@@ -15,7 +16,9 @@ export function ReportsPage() {
 
       <div className="mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         <h2 className="mb-3 text-sm font-semibold text-gray-700">Pipeline by Stage</h2>
-        {!pipeline || pipeline.length === 0 ? (
+        {isPipelineLoading ? (
+          <Spinner label="Loading…" className="justify-center py-6" />
+        ) : !pipeline || pipeline.length === 0 ? (
           <p className="py-6 text-center text-sm text-gray-400">No deals yet.</p>
         ) : (
           <ResponsiveContainer width="100%" height={220}>
@@ -31,7 +34,9 @@ export function ReportsPage() {
 
       <div className="mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         <h2 className="mb-3 text-sm font-semibold text-gray-700">Monthly Sales</h2>
-        {!monthly || monthly.every((m) => Number(m.revenue) === 0) ? (
+        {isMonthlyLoading ? (
+          <Spinner label="Loading…" className="justify-center py-6" />
+        ) : !monthly || monthly.every((m) => Number(m.revenue) === 0) ? (
           <p className="py-6 text-center text-sm text-gray-400">No won deals yet.</p>
         ) : (
           <ResponsiveContainer width="100%" height={220}>
@@ -48,7 +53,9 @@ export function ReportsPage() {
       {canSeeLeaderboard && (
         <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
           <h2 className="mb-3 text-sm font-semibold text-gray-700">Salesperson Performance</h2>
-          {!performance || performance.length === 0 ? (
+          {isPerformanceLoading ? (
+            <Spinner label="Loading…" className="justify-center py-6" />
+          ) : !performance || performance.length === 0 ? (
             <p className="py-6 text-center text-sm text-gray-400">Not enough closed deals yet to show performance.</p>
           ) : (
             <table className="w-full text-sm">

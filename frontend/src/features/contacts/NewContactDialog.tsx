@@ -97,7 +97,7 @@ export function NewContactDialog({ isOpen, onClose, onCreated, fixedCompanyId }:
             <button
               type="submit"
               disabled={createContact.isPending}
-              className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+              className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"
             >
               {createContact.isPending ? 'Creating…' : 'Create'}
             </button>

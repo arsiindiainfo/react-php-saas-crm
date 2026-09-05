@@ -5,6 +5,10 @@ export interface KanbanColumn {
   key: string
   title: string
   headerRight?: ReactNode
+  /** Tailwind classes for the column's tinted header pill, e.g. "bg-violet-50 text-violet-700". */
+  headerClassName?: string
+  /** Tailwind class for the small status dot next to the title, e.g. "bg-violet-500". */
+  dotClassName?: string
 }
 
 interface KanbanBoardProps<T> {
@@ -22,12 +26,15 @@ function DroppableColumn({ column, children }: { column: KanbanColumn; children:
   return (
     <div
       ref={setNodeRef}
-      className={`flex min-h-[200px] w-72 shrink-0 flex-col rounded-lg border bg-gray-50 p-2 transition-colors ${
-        isOver ? 'border-blue-400 bg-blue-50' : 'border-gray-200'
+      className={`flex min-h-[200px] w-72 shrink-0 flex-col rounded-lg border bg-gray-50/50 p-2 transition-colors ${
+        isOver ? 'border-indigo-400 bg-indigo-50' : 'border-gray-200'
       }`}
     >
-      <div className="mb-2 flex items-center justify-between px-1">
-        <h3 className="text-xs font-bold uppercase tracking-wide text-gray-600">{column.title}</h3>
+      <div className={`mb-2 flex items-center justify-between rounded-md px-2.5 py-2 ${column.headerClassName ?? 'bg-gray-100 text-gray-600'}`}>
+        <h3 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide">
+          <span className={`h-2 w-2 shrink-0 rounded-full ${column.dotClassName ?? 'bg-gray-400'}`} />
+          {column.title}
+        </h3>
         {column.headerRight}
       </div>
       <div className="flex flex-1 flex-col gap-2">{children}</div>
@@ -47,7 +54,7 @@ function DraggableCard({ id, children }: { id: string | number; children: ReactN
         transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
         opacity: isDragging ? 0.5 : 1,
       }}
-      className="cursor-grab rounded-md border border-gray-200 bg-white p-3 text-sm shadow-sm active:cursor-grabbing"
+      className="cursor-grab rounded-lg border border-gray-200 bg-white p-3 text-sm shadow-sm transition-shadow hover:shadow-md active:cursor-grabbing"
     >
       {children}
     </div>

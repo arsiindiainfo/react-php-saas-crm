@@ -1,8 +1,12 @@
 import { useMemo, useState } from 'react'
+import { Users, UserPlus2, Clock, CheckCircle2 } from 'lucide-react'
 import { KanbanBoard, type KanbanColumn } from '@/components/KanbanBoard'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
+import { PageSpinner } from '@/components/Spinner'
+import { StatCard } from '@/components/StatCard'
 import { useToast } from '@/components/Toast'
 import { useListQuery } from '@/lib/useListQuery'
+import { LEAD_STATUS_THEME, LEAD_STATUS_LABELS, LEAD_SOURCE_LABELS } from '@/lib/stageTheme'
 import { useDisqualifyLead, useUpdateLeadStatus } from './api'
 import type { Lead } from '@/types/entities'
 import type { LeadStatus } from '@shared/constants'
@@ -10,12 +14,7 @@ import { NewLeadDialog } from './NewLeadDialog'
 import { ConvertLeadDialog } from './ConvertLeadDialog'
 
 const BOARD_STATUSES: LeadStatus[] = ['NEW', 'CONTACTED', 'QUALIFIED', 'DISQUALIFIED']
-const COLUMN_TITLES: Record<string, string> = {
-  NEW: 'New',
-  CONTACTED: 'Contacted',
-  QUALIFIED: 'Qualified',
-  DISQUALIFIED: 'Disqualified',
-}
+const COLUMN_TITLES = LEAD_STATUS_LABELS
 
 export function LeadsBoardPage() {
   const { notify } = useToast()
@@ -40,8 +39,18 @@ export function LeadsBoardPage() {
   const columns: KanbanColumn[] = BOARD_STATUSES.map((status) => ({
     key: status,
     title: COLUMN_TITLES[status],
-    headerRight: <span className="text-[11px] text-gray-400">{itemsByColumn[status]?.length ?? 0}</span>,
+    headerClassName: LEAD_STATUS_THEME[status].header,
+    dotClassName: LEAD_STATUS_THEME[status].dot,
+    headerRight: <span className="text-xs font-bold">{itemsByColumn[status]?.length ?? 0}</span>,
   }))
+
+  const allLeads = data?.data ?? []
+  const stats = {
+    total: allLeads.length,
+    new: allLeads.filter((l) => l.status === 'NEW').length,
+    inProgress: allLeads.filter((l) => l.status === 'CONTACTED' || l.status === 'QUALIFIED').length,
+    converted: allLeads.filter((l) => l.status === 'CONVERTED').length,
+  }
 
   function handleCardMoved(lead: Lead, toColumn: string) {
     const status = toColumn as LeadStatus
@@ -74,18 +83,28 @@ export function LeadsBoardPage() {
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-lg font-bold text-gray-900">Leads</h1>
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-lg font-bold text-gray-900">Leads</h1>
+          <p className="text-sm text-gray-500">Manage and track your leads pipeline</p>
+        </div>
         <button
           onClick={() => setIsCreating(true)}
-          className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+          className="self-start rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-700 sm:self-auto"
         >
           + New Lead
         </button>
       </div>
 
+      <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <StatCard label="Total Leads" value={String(stats.total)} icon={Users} tone="indigo" />
+        <StatCard label="New Leads" value={String(stats.new)} icon={UserPlus2} tone="blue" />
+        <StatCard label="In Progress" value={String(stats.inProgress)} icon={Clock} tone="orange" />
+        <StatCard label="Converted" value={String(stats.converted)} icon={CheckCircle2} tone="green" />
+      </div>
+
       {isLoading ? (
-        <p className="text-sm text-gray-400">Loading…</p>
+        <PageSpinner label="Loading leads…" />
       ) : (
         <KanbanBoard
           columns={columns}
@@ -99,11 +118,14 @@ export function LeadsBoardPage() {
                 {lead.firstName} {lead.lastName}
               </p>
               {lead.companyName && <p className="mt-0.5 text-xs text-gray-500">{lead.companyName}</p>}
+              <span className="mt-2 inline-block rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-600">
+                {LEAD_SOURCE_LABELS[lead.source]}
+              </span>
               {lead.status === 'QUALIFIED' && (
                 <button
                   type="button"
                   onClick={() => setConvertingLead(lead)}
-                  className="mt-2 rounded-md bg-green-600 px-2 py-1 text-xs font-semibold text-white hover:bg-green-700"
+                  className="mt-2 block rounded-md bg-emerald-600 px-2 py-1 text-xs font-semibold text-white hover:bg-emerald-700"
                 >
                   Convert
                 </button>

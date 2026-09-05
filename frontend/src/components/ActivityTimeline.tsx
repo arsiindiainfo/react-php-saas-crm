@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/apiClient'
 import { useToast } from './Toast'
+import { Spinner } from './Spinner'
 import type { Activity } from '@/types/entities'
 import type { ApiSuccess } from '@/types/api'
 import type { RelatableType, ActivityType } from '@shared/constants'
@@ -67,7 +68,7 @@ export function ActivityTimeline({ relatedToType, relatedToId, typeFilter }: Act
         <button
           type="button"
           onClick={() => setIsLogging((v) => !v)}
-          className="rounded-md bg-blue-600 px-3 py-1 text-xs font-semibold text-white hover:bg-blue-700"
+          className="rounded-md bg-indigo-600 px-3 py-1 text-xs font-semibold text-white hover:bg-indigo-700"
         >
           {typeFilter === 'NOTE' ? '+ Note' : '+ Log activity'}
         </button>
@@ -118,7 +119,7 @@ export function ActivityTimeline({ relatedToType, relatedToId, typeFilter }: Act
         </form>
       )}
 
-      {isLoading && <p className="text-sm text-gray-400">Loading…</p>}
+      {isLoading && <Spinner className="py-3" />}
 
       {!isLoading && activities.length === 0 && (
         <p className="rounded-md border border-dashed border-gray-300 p-4 text-center text-sm text-gray-400">

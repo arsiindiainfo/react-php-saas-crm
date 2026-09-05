@@ -60,11 +60,11 @@ export function UsersPage() {
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-lg font-bold text-gray-900">Team</h1>
         <button
           onClick={() => setIsInviting((v) => !v)}
-          className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+          className="self-start rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-700 sm:self-auto"
         >
           + Invite User
         </button>
@@ -112,7 +112,7 @@ export function UsersPage() {
             <button
               type="submit"
               disabled={inviteUser.isPending}
-              className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+              className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"
             >
               {inviteUser.isPending ? 'Inviting…' : 'Invite'}
             </button>
@@ -143,7 +143,7 @@ export function UsersPage() {
                   <Pill value={u.status} />
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <button onClick={() => toggleStatus(u.id, u.status)} className="text-xs font-semibold text-blue-600">
+                  <button onClick={() => toggleStatus(u.id, u.status)} className="text-xs font-semibold text-indigo-600">
                     {u.status === 'ACTIVE' ? 'Disable' : 'Activate'}
                   </button>
                 </td>

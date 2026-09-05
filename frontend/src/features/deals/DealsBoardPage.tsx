@@ -1,22 +1,19 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Building2, Calendar } from 'lucide-react'
 import { KanbanBoard, type KanbanColumn } from '@/components/KanbanBoard'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
+import { PageSpinner } from '@/components/Spinner'
 import { useToast } from '@/components/Toast'
 import { useListQuery } from '@/lib/useListQuery'
+import { DEAL_STAGE_THEME, DEAL_STAGE_LABELS } from '@/lib/stageTheme'
 import { useChangeDealStage } from './api'
 import type { Deal } from '@/types/entities'
 import { DEAL_STAGES, type DealStage } from '@shared/constants'
 import { NewDealDialog } from './NewDealDialog'
 import { resolveStageMoveAction } from './stageMove'
 
-const COLUMN_TITLES: Record<DealStage, string> = {
-  PROSPECTING: 'Prospecting',
-  PROPOSAL: 'Proposal',
-  NEGOTIATION: 'Negotiation',
-  WON: 'Won',
-  LOST: 'Lost',
-}
+const COLUMN_TITLES = DEAL_STAGE_LABELS
 
 export function DealsBoardPage() {
   const navigate = useNavigate()
@@ -40,8 +37,10 @@ export function DealsBoardPage() {
     return {
       key: stage,
       title: COLUMN_TITLES[stage],
+      headerClassName: DEAL_STAGE_THEME[stage].header,
+      dotClassName: DEAL_STAGE_THEME[stage].dot,
       headerRight: (
-        <span className="text-[11px] text-gray-400">
+        <span className="text-xs font-bold">
           {items.length} · ${total.toLocaleString()}
         </span>
       ),
@@ -88,18 +87,21 @@ export function DealsBoardPage() {
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-lg font-bold text-gray-900">Deals Pipeline</h1>
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-lg font-bold text-gray-900">Deals Pipeline</h1>
+          <p className="text-sm text-gray-500">Track and manage your sales deals across the pipeline</p>
+        </div>
         <button
           onClick={() => setIsCreating(true)}
-          className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+          className="self-start rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-700 sm:self-auto"
         >
           + New Deal
         </button>
       </div>
 
       {isLoading ? (
-        <p className="text-sm text-gray-400">Loading…</p>
+        <PageSpinner label="Loading deals…" />
       ) : (
         <KanbanBoard
           columns={columns}
@@ -108,9 +110,17 @@ export function DealsBoardPage() {
           findItem={(id) => data?.data.find((d) => d.id === id)}
           onCardMoved={handleCardMoved}
           renderCard={(deal) => (
-            <div onClick={() => navigate(`/deals/${deal.id}`)}>
+            <div onClick={() => navigate(`/deals/${deal.id}`)} className="cursor-pointer">
               <p className="font-medium text-gray-900">{deal.name}</p>
-              <p className="mt-1 text-xs text-gray-500">${Number(deal.valueAmount).toLocaleString()}</p>
+              <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-gray-700">
+                <Building2 size={12} className="text-gray-400" />${Number(deal.valueAmount).toLocaleString()}
+              </p>
+              {deal.expectedCloseDate && (
+                <p className="mt-1 flex items-center gap-1 text-[11px] text-gray-400">
+                  <Calendar size={11} />
+                  {new Date(deal.expectedCloseDate).toLocaleDateString()}
+                </p>
+              )}
             </div>
           )}
         />

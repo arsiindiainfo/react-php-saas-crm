@@ -2,6 +2,7 @@ import { Fragment, useState } from 'react'
 import { useListQuery } from '@/lib/useListQuery'
 import type { AuditLogEntry } from '@/types/entities'
 import { Pagination } from '@/components/Pagination'
+import { PageSpinner } from '@/components/Spinner'
 
 /** §22.11 — ADMIN only (route-guarded). Each row expands to show the JSON details payload. */
 export function AuditLogPage() {
@@ -14,7 +15,7 @@ export function AuditLogPage() {
       <h1 className="mb-4 text-lg font-bold text-gray-900">Audit Log</h1>
 
       {isLoading ? (
-        <p className="text-sm text-gray-400">Loading…</p>
+        <PageSpinner />
       ) : (
         <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
           <table className="w-full text-sm">

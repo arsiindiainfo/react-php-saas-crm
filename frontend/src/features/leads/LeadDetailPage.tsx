@@ -2,17 +2,18 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useLead } from './api'
 import { Pill } from '@/components/Pill'
 import { ActivityTimeline } from '@/components/ActivityTimeline'
+import { PageSpinner } from '@/components/Spinner'
 
 export function LeadDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { data: lead, isLoading } = useLead(Number(id))
 
-  if (isLoading || !lead) return <p className="text-sm text-gray-400">Loading…</p>
+  if (isLoading || !lead) return <PageSpinner />
 
   return (
     <div className="mx-auto max-w-3xl">
-      <Link to="/leads" className="text-sm text-blue-600">
+      <Link to="/leads" className="text-sm text-indigo-600">
         ← Back to Leads
       </Link>
       <div className="mt-2 mb-6 flex items-center gap-3">
@@ -38,7 +39,7 @@ export function LeadDetailPage() {
         {lead.convertedDealId && (
           <div>
             <div className="text-xs font-semibold uppercase text-gray-400">Converted to</div>
-            <button onClick={() => navigate(`/deals/${lead.convertedDealId}`)} className="mt-1 text-blue-600">
+            <button onClick={() => navigate(`/deals/${lead.convertedDealId}`)} className="mt-1 text-indigo-600">
               View deal
             </button>
           </div>

@@ -5,6 +5,7 @@ import { useListQuery } from '@/lib/useListQuery'
 import { Pill } from '@/components/Pill'
 import { ActivityTimeline } from '@/components/ActivityTimeline'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
+import { PageSpinner } from '@/components/Spinner'
 import { useToast } from '@/components/Toast'
 import { useDeleteCompany } from './api'
 import type { Contact, Deal } from '@/types/entities'
@@ -29,7 +30,7 @@ export function CompanyDetailPage() {
   const deleteCompany = useDeleteCompany()
 
   if (isLoading || !company) {
-    return <p className="text-sm text-gray-400">Loading…</p>
+    return <PageSpinner />
   }
 
   function setTab(next: Tab) {
@@ -38,7 +39,7 @@ export function CompanyDetailPage() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <Link to="/companies" className="text-sm text-blue-600">
+      <Link to="/companies" className="text-sm text-indigo-600">
         ← Back to Companies
       </Link>
 
@@ -61,7 +62,7 @@ export function CompanyDetailPage() {
             key={t}
             onClick={() => setTab(t)}
             className={`px-3 py-2 text-sm font-medium capitalize ${
-              tab === t ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-800'
+              tab === t ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-500 hover:text-gray-800'
             }`}
           >
             {t}
@@ -127,7 +128,7 @@ function CompanyContactsTab({ companyId, onAdd }: { companyId: number; onAdd: ()
   return (
     <div>
       <div className="mb-2 flex justify-end">
-        <button onClick={onAdd} className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700">
+        <button onClick={onAdd} className="rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700">
           + Add Contact
         </button>
       </div>
@@ -157,7 +158,7 @@ function CompanyDealsTab({ companyId, onAdd }: { companyId: number; onAdd: () =>
   return (
     <div>
       <div className="mb-2 flex justify-end">
-        <button onClick={onAdd} className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700">
+        <button onClick={onAdd} className="rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700">
           + Add Deal
         </button>
       </div>
@@ -167,7 +168,7 @@ function CompanyDealsTab({ companyId, onAdd }: { companyId: number; onAdd: () =>
         <ul className="divide-y divide-gray-100 rounded-lg border border-gray-200 bg-white">
           {data.data.map((d) => (
             <li key={d.id} className="flex items-center justify-between px-4 py-3 text-sm">
-              <Link to={`/deals/${d.id}`} className="font-medium text-blue-600">
+              <Link to={`/deals/${d.id}`} className="font-medium text-indigo-600">
                 {d.name}
               </Link>
               <div className="flex items-center gap-2">
