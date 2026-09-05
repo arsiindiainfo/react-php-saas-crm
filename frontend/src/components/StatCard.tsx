@@ -5,7 +5,7 @@ interface StatCardProps {
   value: string
   emptyHint?: string
   icon?: LucideIcon
-  tone?: 'indigo' | 'green' | 'orange' | 'blue' | 'pink'
+  tone?: 'indigo' | 'green' | 'orange' | 'blue' | 'pink' | 'red' | 'gray'
 }
 
 const TONE_CLASSES: Record<NonNullable<StatCardProps['tone']>, string> = {
@@ -14,6 +14,8 @@ const TONE_CLASSES: Record<NonNullable<StatCardProps['tone']>, string> = {
   orange: 'bg-orange-100 text-orange-600',
   blue: 'bg-blue-100 text-blue-600',
   pink: 'bg-pink-100 text-pink-600',
+  red: 'bg-red-100 text-red-600',
+  gray: 'bg-gray-100 text-gray-500',
 }
 
 /** §22.2 — a zero-value KPI shows an explanatory hint, never a blank card. */

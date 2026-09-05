@@ -38,7 +38,7 @@ export function DashboardPage() {
         <StatCard label="Customers" value={String(totals.totalCompanies)} emptyHint="No customers yet" icon={Users} tone="indigo" />
         <StatCard label="New Leads" value={String(totals.newLeadsThisMonth)} emptyHint="No activity yet this month" icon={UserPlus2} tone="green" />
         <StatCard label="Conv. Rate" value={`${totals.conversionRate}%`} emptyHint="No activity yet this month" icon={TrendingUp} tone="orange" />
-        <StatCard label="Open Deals" value={`${totals.openDealsCount} · $${Number(totals.openDealsValue).toLocaleString()}`} emptyHint="No open deals" icon={Briefcase} tone="blue" />
+        <StatCard label={`Open Deals (${totals.openDealsCount})`} value={`$${Number(totals.openDealsValue).toLocaleString()}`} emptyHint="No open deals" icon={Briefcase} tone="blue" />
         <StatCard label="Revenue MTD" value={`$${Number(totals.revenueThisMonth).toLocaleString()}`} emptyHint="No activity yet this month" icon={DollarSign} tone="pink" />
       </div>
 

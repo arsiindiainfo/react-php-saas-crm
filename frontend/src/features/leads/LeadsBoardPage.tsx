@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Users, UserPlus2, Clock, CheckCircle2 } from 'lucide-react'
+import { Users, UserPlus2, Clock, CheckCircle2, XCircle } from 'lucide-react'
 import { KanbanBoard, type KanbanColumn } from '@/components/KanbanBoard'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { PageSpinner } from '@/components/Spinner'
@@ -44,12 +44,14 @@ export function LeadsBoardPage() {
     headerRight: <span className="text-xs font-bold">{itemsByColumn[status]?.length ?? 0}</span>,
   }))
 
+  // Every status is counted here so the cards reconcile exactly with "Total Leads".
   const allLeads = data?.data ?? []
   const stats = {
     total: allLeads.length,
     new: allLeads.filter((l) => l.status === 'NEW').length,
     inProgress: allLeads.filter((l) => l.status === 'CONTACTED' || l.status === 'QUALIFIED').length,
     converted: allLeads.filter((l) => l.status === 'CONVERTED').length,
+    disqualified: allLeads.filter((l) => l.status === 'DISQUALIFIED').length,
   }
 
   function handleCardMoved(lead: Lead, toColumn: string) {
@@ -96,11 +98,12 @@ export function LeadsBoardPage() {
         </button>
       </div>
 
-      <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         <StatCard label="Total Leads" value={String(stats.total)} icon={Users} tone="indigo" />
         <StatCard label="New Leads" value={String(stats.new)} icon={UserPlus2} tone="blue" />
         <StatCard label="In Progress" value={String(stats.inProgress)} icon={Clock} tone="orange" />
         <StatCard label="Converted" value={String(stats.converted)} icon={CheckCircle2} tone="green" />
+        <StatCard label="Disqualified" value={String(stats.disqualified)} icon={XCircle} tone="gray" />
       </div>
 
       {isLoading ? (
