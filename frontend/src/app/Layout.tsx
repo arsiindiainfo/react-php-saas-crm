@@ -65,9 +65,14 @@ export function Layout() {
     <>
       <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
         <div>
-          <div className="mb-2 inline-block rounded-md bg-white px-2 py-1.5">
-            <img src={arsiLogo} alt="Arsi India Info" className="h-6 w-auto" />
-          </div>
+          <a
+            href="https://demo.arsiindiainfo.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mb-2 inline-block rounded-md bg-white px-2.5 py-2"
+          >
+            <img src={arsiLogo} alt="Arsi India Info" className="h-9 w-auto" />
+          </a>
           <div className="text-sm font-bold text-white">Arsi CRM</div>
           <div className="text-xs text-gray-400">Brightfield Business Solutions</div>
         </div>

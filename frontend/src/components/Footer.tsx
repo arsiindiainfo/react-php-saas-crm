@@ -1,4 +1,4 @@
-import { BadgeCheck, Code2, Mail, ShieldCheck, User, Zap } from 'lucide-react'
+import { BadgeCheck, Code2, Mail, ShieldCheck, Zap } from 'lucide-react'
 import arsiLogo from '@/assets/arsi-logo.png'
 
 const WHATSAPP_NUMBER_DISPLAY = '+91 94337 96101'
@@ -6,7 +6,6 @@ const WHATSAPP_LINK = 'https://wa.me/919433796101'
 const TEAMS_EMAIL = 'arsi.india.info@gmail.com'
 const TEAMS_LINK = `https://teams.microsoft.com/l/chat/0/0?users=${TEAMS_EMAIL}`
 const UPWORK_LINK = 'https://www.upwork.com/freelancers/~0172bf8ee328825a5a?mp_source=share'
-const CONTACT_PAGE_LINK = 'https://arsiindiainfo.com/contact'
 
 function WhatsAppIcon() {
   return (
@@ -28,16 +27,6 @@ function UpworkIcon() {
   return (
     <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="currentColor" aria-hidden="true">
       <path d="M18.56 7.68c-1.85 0-3.28 1.23-3.9 3.14-.32-.5-.6-1.07-.83-1.63l-.42-1.13h-2.24v5.35c0 1.07-.87 1.93-1.93 1.93s-1.93-.86-1.93-1.93V8.06H5.06v5.35c0 2.3 1.87 4.19 4.18 4.19 2.2 0 4-1.7 4.16-3.86l.4 1.13c.4 1.03.98 1.94 1.72 2.7l-1.05 4.9h2.28l.79-3.68c.63.24 1.32.37 2.02.37 2.94 0 5.32-2.4 5.32-5.34s-2.38-5.14-5.32-5.14Zm0 8.24c-.86 0-1.66-.32-2.28-.9l.2-.94c.24-1.36.98-2.25 1.98-2.25 1.11 0 2.01.98 2.01 2.05 0 1.13-.9 2.04-1.91 2.04Z" />
-    </svg>
-  )
-}
-
-function ContactPageIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="3" y="4" width="18" height="16" rx="2" />
-      <path d="M3 9h18" />
-      <path d="M8 13h8M8 16h5" />
     </svg>
   )
 }
@@ -78,41 +67,35 @@ const CONTACT_CHIPS = [
     label: 'Hire on Upwork',
     value: 'View my profile',
   },
-  {
-    key: 'contact',
-    href: CONTACT_PAGE_LINK,
-    external: true,
-    icon: <ContactPageIcon />,
-    iconBg: 'bg-purple-100 text-purple-600',
-    label: 'Contact Page',
-    value: 'Visit our contact page',
-  },
 ]
 
 export function Footer() {
   return (
     <footer className="border-t border-gray-200 bg-gradient-to-br from-white via-blue-50/40 to-white">
-      <div className="mx-auto flex max-w-[1600px] flex-col gap-6 px-6 py-8 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex shrink-0 flex-col items-start gap-1">
-          <img src={arsiLogo} alt="Arsi India Info" className="h-8 w-auto" />
+      <div className="mx-auto flex max-w-[1600px] flex-col divide-y divide-gray-200 px-6 py-2 lg:flex-row lg:items-center lg:divide-x lg:divide-y-0">
+        <div className="flex shrink-0 items-center py-4 lg:pr-6">
+          <a href="https://demo.arsiindiainfo.com/" target="_blank" rel="noopener noreferrer">
+            <img src={arsiLogo} alt="Arsi India Info" className="h-8 w-auto" />
+          </a>
         </div>
 
-        <div className="max-w-sm">
+        <div className="max-w-sm py-4 lg:px-6">
           <h3 className="text-base font-bold text-gray-900">Need a custom CRM for your business?</h3>
           <p className="mt-1 text-sm text-gray-500">
             This CRM demo shows what we can build for you. Let&apos;s build it together &mdash; custom development
             and ongoing support available.
           </p>
+          <p className="mt-2 text-sm font-bold text-gray-900">Built by Rajib Majumder</p>
         </div>
 
-        <div className="flex flex-wrap gap-2.5">
+        <div className="flex flex-wrap gap-2.5 py-4 lg:flex-nowrap lg:pl-6">
           {CONTACT_CHIPS.map((chip) => (
             <a
               key={chip.key}
               href={chip.href}
               target={chip.external ? '_blank' : undefined}
               rel={chip.external ? 'noopener noreferrer' : undefined}
-              className="flex items-center gap-2.5 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+              className="flex items-center gap-2.5 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
             >
               <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${chip.iconBg}`}>
                 {chip.icon}
@@ -123,17 +106,6 @@ export function Footer() {
               </span>
             </a>
           ))}
-        </div>
-
-        <div className="flex shrink-0 items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
-            <User size={20} />
-          </span>
-          <span>
-            <span className="block text-xs font-semibold text-gray-900">Built by Rajib Majumder</span>
-            <span className="block text-[11px] text-gray-500">Full-Stack Web Developer</span>
-            <span className="block text-[11px] text-gray-500">15+ years of web development experience</span>
-          </span>
         </div>
       </div>
 
