@@ -74,7 +74,7 @@ export function Footer() {
     <footer className="border-t border-gray-200 bg-gradient-to-br from-white via-blue-50/40 to-white">
       <div className="mx-auto flex max-w-[1600px] flex-col divide-y divide-gray-200 px-6 py-2 lg:flex-row lg:items-center lg:divide-x lg:divide-y-0">
         <div className="flex shrink-0 items-center py-4 lg:pr-6">
-          <a href="https://demo.arsiindiainfo.com/" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.arsiindiainfo.com/" target="_blank" rel="noopener noreferrer">
             <img src={arsiLogo} alt="Arsi India Info" className="h-8 w-auto" />
           </a>
         </div>
