@@ -19,6 +19,9 @@ class Crm extends BaseConfig
 
     public int $loginRateLimitPerMinute = 10;
 
+    /** Owner account — can't be disabled or removed by any admin, including itself. */
+    public string $protectedUserEmail = 'arsi.india.info@gmail.com';
+
     /** @var list<string> */
     public array $userRoles = ['ADMIN', 'SALES_MANAGER', 'SALES_REP'];
 

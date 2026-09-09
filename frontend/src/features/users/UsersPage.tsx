@@ -25,6 +25,9 @@ const schema = z.object({
 type FormInput = z.input<typeof schema>
 type FormValues = z.output<typeof schema>
 
+/** Owner account — matches the same guard on the backend (AuthService). */
+const PROTECTED_USER_EMAIL = 'arsi.india.info@gmail.com'
+
 /** §22.10 — ADMIN only (route-guarded). */
 export function UsersPage() {
   const { notify } = useToast()
@@ -153,12 +156,18 @@ export function UsersPage() {
                   <Pill value={u.status} />
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <button onClick={() => toggleStatus(u.id, u.status)} className="mr-3 text-xs font-semibold text-indigo-600">
-                    {u.status === 'ACTIVE' ? 'Disable' : 'Activate'}
-                  </button>
-                  <button onClick={() => setRemovingUser(u)} className="text-xs font-semibold text-red-600">
-                    Remove
-                  </button>
+                  {u.email === PROTECTED_USER_EMAIL ? (
+                    <span className="text-xs text-gray-400">&mdash;</span>
+                  ) : (
+                    <>
+                      <button onClick={() => toggleStatus(u.id, u.status)} className="mr-3 text-xs font-semibold text-indigo-600">
+                        {u.status === 'ACTIVE' ? 'Disable' : 'Activate'}
+                      </button>
+                      <button onClick={() => setRemovingUser(u)} className="text-xs font-semibold text-red-600">
+                        Remove
+                      </button>
+                    </>
+                  )}
                 </td>
               </tr>
             ))}
