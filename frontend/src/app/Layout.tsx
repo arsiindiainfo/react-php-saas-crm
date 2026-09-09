@@ -16,6 +16,7 @@ import {
   LogOut,
 } from 'lucide-react'
 import { useAuth } from '@/features/auth/AuthContext'
+import { Footer } from '@/components/Footer'
 import arsiLogo from '@/assets/arsi-logo.png'
 
 const NAV_ITEMS = [
@@ -137,37 +138,40 @@ export function Layout() {
   )
 
   return (
-    <div className="flex min-h-screen">
-      {/* Mobile overlay */}
-      {isMobileNavOpen && (
-        <div className="fixed inset-0 z-30 bg-black/40 lg:hidden" onClick={closeMobileNav} aria-hidden="true" />
-      )}
+    <div className="flex min-h-screen flex-col">
+      <div className="flex flex-1">
+        {/* Mobile overlay */}
+        {isMobileNavOpen && (
+          <div className="fixed inset-0 z-30 bg-black/40 lg:hidden" onClick={closeMobileNav} aria-hidden="true" />
+        )}
 
-      {/* Sidebar — off-canvas drawer on mobile, fixed column on desktop */}
-      <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-64 shrink-0 flex-col bg-gray-900 text-gray-200 transition-transform duration-200 lg:static lg:translate-x-0 ${
-          isMobileNavOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        {sidebarContent}
-      </aside>
+        {/* Sidebar — off-canvas drawer on mobile, fixed column on desktop */}
+        <aside
+          className={`fixed inset-y-0 left-0 z-40 flex w-64 shrink-0 flex-col bg-gray-900 text-gray-200 transition-transform duration-200 lg:static lg:translate-x-0 ${
+            isMobileNavOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+        >
+          {sidebarContent}
+        </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center gap-3 border-b border-gray-200 bg-white px-4 py-3 lg:hidden">
-          <button
-            type="button"
-            onClick={() => setIsMobileNavOpen(true)}
-            className="rounded-md p-1.5 text-gray-500 hover:bg-gray-100"
-            aria-label="Open menu"
-          >
-            <Menu size={22} />
-          </button>
-          <span className="text-sm font-bold text-gray-900">Arsi CRM</span>
-        </header>
-        <main className="flex-1 p-4 sm:p-6">
-          <Outlet />
-        </main>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <header className="flex items-center gap-3 border-b border-gray-200 bg-white px-4 py-3 lg:hidden">
+            <button
+              type="button"
+              onClick={() => setIsMobileNavOpen(true)}
+              className="rounded-md p-1.5 text-gray-500 hover:bg-gray-100"
+              aria-label="Open menu"
+            >
+              <Menu size={22} />
+            </button>
+            <span className="text-sm font-bold text-gray-900">Arsi CRM</span>
+          </header>
+          <main className="flex-1 p-4 sm:p-6">
+            <Outlet />
+          </main>
+        </div>
       </div>
+      <Footer />
     </div>
   )
 }
