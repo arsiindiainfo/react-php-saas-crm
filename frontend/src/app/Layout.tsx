@@ -14,9 +14,11 @@ import {
   X,
   ChevronDown,
   LogOut,
+  KeyRound,
 } from 'lucide-react'
 import { useAuth } from '@/features/auth/AuthContext'
 import { Footer } from '@/components/Footer'
+import { ChangePasswordDialog } from '@/components/ChangePasswordDialog'
 import arsiLogo from '@/assets/arsi-logo.png'
 
 const NAV_ITEMS = [
@@ -50,6 +52,7 @@ export function Layout() {
   const { user, logout } = useAuth()
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const [isChangingPassword, setIsChangingPassword] = useState(false)
 
   function navLinkClasses({ isActive }: { isActive: boolean }) {
     return `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
@@ -107,17 +110,30 @@ export function Layout() {
 
       <div className="relative border-t border-white/10 p-3">
         {isUserMenuOpen && (
-          <button
-            type="button"
-            onClick={() => {
-              setIsUserMenuOpen(false)
-              void logout()
-            }}
-            className="absolute inset-x-3 bottom-[calc(100%+4px)] flex items-center gap-2 rounded-lg border border-white/10 bg-gray-800 px-3 py-2 text-sm font-medium text-gray-200 shadow-lg hover:bg-gray-700"
-          >
-            <LogOut size={16} />
-            Sign out
-          </button>
+          <div className="absolute inset-x-3 bottom-[calc(100%+4px)] flex flex-col gap-1 rounded-lg border border-white/10 bg-gray-800 p-1.5 shadow-lg">
+            <button
+              type="button"
+              onClick={() => {
+                setIsUserMenuOpen(false)
+                setIsChangingPassword(true)
+              }}
+              className="flex items-center gap-2 rounded-md px-2.5 py-2 text-sm font-medium text-gray-200 hover:bg-white/5"
+            >
+              <KeyRound size={16} />
+              Change Password
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIsUserMenuOpen(false)
+                void logout()
+              }}
+              className="flex items-center gap-2 rounded-md px-2.5 py-2 text-sm font-medium text-gray-200 hover:bg-white/5"
+            >
+              <LogOut size={16} />
+              Sign out
+            </button>
+          </div>
         )}
         <button
           type="button"
@@ -172,6 +188,7 @@ export function Layout() {
         </div>
       </div>
       <Footer />
+      <ChangePasswordDialog isOpen={isChangingPassword} onClose={() => setIsChangingPassword(false)} />
     </div>
   )
 }

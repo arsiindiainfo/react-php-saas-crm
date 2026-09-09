@@ -51,6 +51,11 @@ class Validation extends BaseConfig
         'refreshToken' => 'required|string',
     ];
 
+    public array $authChangePassword = [
+        'currentPassword' => 'required',
+        'newPassword'     => 'required|min_length[8]',
+    ];
+
     public array $userInvite = [
         'name'      => 'required|min_length[2]|max_length[120]',
         'email'     => 'required|valid_email|max_length[190]',

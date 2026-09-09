@@ -73,6 +73,18 @@ class AuthService
         $this->refreshTokens->revoke($rawRefreshToken);
     }
 
+    public function changePassword(int $userId, string $currentPassword, string $newPassword): void
+    {
+        /** @var User|null $user */
+        $user = $this->users->find($userId);
+
+        if ($user === null || ! password_verify($currentPassword, $user->password_hash)) {
+            throw new UnauthorizedException('Current password is incorrect.');
+        }
+
+        $this->users->update($userId, ['password_hash' => password_hash($newPassword, PASSWORD_BCRYPT)]);
+    }
+
     /**
      * @return array{accessToken:string,refreshToken:string,user:User}
      */
@@ -168,6 +180,10 @@ class AuthService
             throw new ForbiddenRoleException('You cannot disable your own account.');
         }
 
+        if ($user->email === $this->crm->protectedUserEmail && isset($allowed['status']) && $allowed['status'] === 'DISABLED') {
+            throw new ForbiddenRoleException('This account cannot be disabled.');
+        }
+
         $this->users->update($userId, $allowed);
 
         /** @var User $updated */
@@ -178,6 +194,12 @@ class AuthService
 
     public function deleteUser(int $userId, User $actingAdmin): void
     {
+        $target = $this->users->find($userId);
+
+        if ($target !== null && $target->email === $this->crm->protectedUserEmail) {
+            throw new ForbiddenRoleException('This account cannot be removed.');
+        }
+
         $result = $this->users->deleteUser($userId, $actingAdmin->id);
 
         if ($result['statusCode'] === 'USER_NOT_FOUND') {

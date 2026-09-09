@@ -85,6 +85,33 @@ class AuthController extends BaseApiController
         return $this->ok(['message' => 'Logged out.']);
     }
 
+    #[OA\Post(
+        path: '/auth/change-password',
+        summary: 'Change your own password',
+        tags: ['Auth'],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(required: true, content: new OA\JsonContent(
+            required: ['currentPassword', 'newPassword'],
+            properties: [
+                new OA\Property(property: 'currentPassword', type: 'string'),
+                new OA\Property(property: 'newPassword', type: 'string', minLength: 8),
+            ],
+        )),
+        responses: [
+            new OA\Response(response: 200, description: 'Password changed'),
+            new OA\Response(response: 400, description: 'VALIDATION_ERROR', content: new OA\JsonContent(ref: '#/components/schemas/ErrorEnvelope')),
+            new OA\Response(response: 401, description: 'UNAUTHORIZED — current password is incorrect', content: new OA\JsonContent(ref: '#/components/schemas/ErrorEnvelope')),
+        ],
+    )]
+    public function changePassword()
+    {
+        $data = $this->validateBody('authChangePassword');
+
+        $this->auth->changePassword($this->authUser()->id, $data['currentPassword'], $data['newPassword']);
+
+        return $this->ok(['message' => 'Password changed.']);
+    }
+
     #[OA\Get(
         path: '/users/me',
         summary: 'Current authenticated profile',

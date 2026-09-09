@@ -20,6 +20,7 @@ $routes->group(
     ['namespace' => 'App\Controllers', 'filter' => ['jwtAuth', 'ownershipScope']],
     static function ($routes): void {
         $routes->post('auth/logout', 'AuthController::logout');
+        $routes->post('auth/change-password', 'AuthController::changePassword');
         $routes->get('users/me', 'AuthController::me');
 
         $routes->group('users', ['filter' => 'role:ADMIN'], static function ($routes): void {
