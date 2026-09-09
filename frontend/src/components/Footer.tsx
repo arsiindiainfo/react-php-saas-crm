@@ -85,7 +85,12 @@ export function Footer() {
             This CRM demo shows what we can build for you. Let&apos;s build it together &mdash; custom development
             and ongoing support available.
           </p>
-          <p className="mt-2 text-sm font-bold text-gray-900">Built by Rajib Majumder</p>
+          <p className="mt-2 flex items-center gap-2 text-sm text-gray-600">
+            Built by :
+            <span className="rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-bold text-indigo-700">
+              Rajib Majumder
+            </span>
+          </p>
         </div>
 
         <div className="flex flex-wrap gap-2.5 py-4 lg:flex-nowrap lg:pl-6">
