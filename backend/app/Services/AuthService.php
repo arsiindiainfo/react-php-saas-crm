@@ -78,6 +78,10 @@ class AuthService
         /** @var User|null $user */
         $user = $this->users->find($userId);
 
+        if ($user !== null && in_array($user->email, $this->crm->demoUserEmails, true)) {
+            throw new ForbiddenRoleException('This is a shared demo account and its password cannot be changed.');
+        }
+
         if ($user === null || ! password_verify($currentPassword, $user->password_hash)) {
             throw new UnauthorizedException('Current password is incorrect.');
         }
@@ -184,6 +188,14 @@ class AuthService
             throw new ForbiddenRoleException('This account cannot be disabled.');
         }
 
+        if (
+            in_array($user->email, $this->crm->demoUserEmails, true)
+            && isset($allowed['status']) && $allowed['status'] === 'DISABLED'
+            && $actingAdmin->email !== $this->crm->protectedUserEmail
+        ) {
+            throw new ForbiddenRoleException('Only the owner account can disable a demo login account.');
+        }
+
         $this->users->update($userId, $allowed);
 
         /** @var User $updated */
@@ -198,6 +210,14 @@ class AuthService
 
         if ($target !== null && $target->email === $this->crm->protectedUserEmail) {
             throw new ForbiddenRoleException('This account cannot be removed.');
+        }
+
+        if (
+            $target !== null
+            && in_array($target->email, $this->crm->demoUserEmails, true)
+            && $actingAdmin->email !== $this->crm->protectedUserEmail
+        ) {
+            throw new ForbiddenRoleException('Only the owner account can remove a demo login account.');
         }
 
         $result = $this->users->deleteUser($userId, $actingAdmin->id);

@@ -22,6 +22,23 @@ class Crm extends BaseConfig
     /** Owner account — can't be disabled or removed by any admin, including itself. */
     public string $protectedUserEmail = 'arsi.india.info@gmail.com';
 
+    /**
+     * Seeded demo-login accounts, shown as quick-login credentials on the
+     * login page. They can't change their own password (a shared/public
+     * credential changing would lock other demo visitors out), and only
+     * the owner account above can disable or remove them.
+     *
+     * @var list<string>
+     */
+    public array $demoUserEmails = [
+        'admin@brightfield.test',
+        'karan.rep@brightfield.test',
+        'meera.rep@brightfield.test',
+        'priya.manager@brightfield.test',
+        'rohan.manager@brightfield.test',
+        'sana.rep@brightfield.test',
+    ];
+
     /** @var list<string> */
     public array $userRoles = ['ADMIN', 'SALES_MANAGER', 'SALES_REP'];
 

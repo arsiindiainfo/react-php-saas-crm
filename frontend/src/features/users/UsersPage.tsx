@@ -8,6 +8,7 @@ import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { ApiError } from '@/types/api'
 import { USER_ROLES } from '@shared/constants'
 import type { User } from '@/types/entities'
+import { useAuth } from '@/features/auth/AuthContext'
 import { useDeleteUser, useInviteUser, useUpdateUser, useUsers } from './api'
 
 const schema = z.object({
@@ -28,9 +29,23 @@ type FormValues = z.output<typeof schema>
 /** Owner account — matches the same guard on the backend (AuthService). */
 const PROTECTED_USER_EMAIL = 'arsi.india.info@gmail.com'
 
+/**
+ * Seeded quick-login demo accounts (shown on the login page) — only the
+ * owner account above can disable/remove these. Matches Crm::demoUserEmails.
+ */
+const DEMO_USER_EMAILS = new Set([
+  'admin@brightfield.test',
+  'karan.rep@brightfield.test',
+  'meera.rep@brightfield.test',
+  'priya.manager@brightfield.test',
+  'rohan.manager@brightfield.test',
+  'sana.rep@brightfield.test',
+])
+
 /** §22.10 — ADMIN only (route-guarded). */
 export function UsersPage() {
   const { notify } = useToast()
+  const { user: currentUser } = useAuth()
   const { data: users } = useUsers()
   const inviteUser = useInviteUser()
   const updateUser = useUpdateUser()
@@ -156,7 +171,8 @@ export function UsersPage() {
                   <Pill value={u.status} />
                 </td>
                 <td className="px-4 py-3 text-right">
-                  {u.email === PROTECTED_USER_EMAIL ? (
+                  {u.email === PROTECTED_USER_EMAIL ||
+                  (DEMO_USER_EMAILS.has(u.email) && currentUser?.email !== PROTECTED_USER_EMAIL) ? (
                     <span className="text-xs text-gray-400">&mdash;</span>
                   ) : (
                     <>

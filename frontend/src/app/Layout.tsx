@@ -42,6 +42,19 @@ const ROLE_LABELS: Record<string, string> = {
   SALES_REP: 'Sales Rep',
 }
 
+/**
+ * Seeded quick-login demo accounts (shown on the login page) — can't
+ * change their own (shared/public) password. Matches Crm::demoUserEmails.
+ */
+const DEMO_USER_EMAILS = new Set([
+  'admin@brightfield.test',
+  'karan.rep@brightfield.test',
+  'meera.rep@brightfield.test',
+  'priya.manager@brightfield.test',
+  'rohan.manager@brightfield.test',
+  'sana.rep@brightfield.test',
+])
+
 function initialsOf(name: string | undefined) {
   if (!name) return '?'
   const parts = name.trim().split(/\s+/)
@@ -111,17 +124,19 @@ export function Layout() {
       <div className="relative border-t border-white/10 p-3">
         {isUserMenuOpen && (
           <div className="absolute inset-x-3 bottom-[calc(100%+4px)] flex flex-col gap-1 rounded-lg border border-white/10 bg-gray-800 p-1.5 shadow-lg">
-            <button
-              type="button"
-              onClick={() => {
-                setIsUserMenuOpen(false)
-                setIsChangingPassword(true)
-              }}
-              className="flex items-center gap-2 rounded-md px-2.5 py-2 text-sm font-medium text-gray-200 hover:bg-white/5"
-            >
-              <KeyRound size={16} />
-              Change Password
-            </button>
+            {!DEMO_USER_EMAILS.has(user?.email ?? '') && (
+              <button
+                type="button"
+                onClick={() => {
+                  setIsUserMenuOpen(false)
+                  setIsChangingPassword(true)
+                }}
+                className="flex items-center gap-2 rounded-md px-2.5 py-2 text-sm font-medium text-gray-200 hover:bg-white/5"
+              >
+                <KeyRound size={16} />
+                Change Password
+              </button>
+            )}
             <button
               type="button"
               onClick={() => {
