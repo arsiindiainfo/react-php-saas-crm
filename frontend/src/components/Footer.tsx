@@ -45,11 +45,11 @@ function ContactPageIcon() {
 const CONTACT_CHIPS = [
   {
     key: 'email',
-    href: 'mailto:info@arsiindiainfo.com',
+    href: 'mailto:arsi.india.info@gmail.com',
     icon: <Mail size={18} />,
     iconBg: 'bg-blue-100 text-blue-600',
     label: 'Email',
-    value: 'info@arsiindiainfo.com',
+    value: 'arsi.india.info@gmail.com',
   },
   {
     key: 'whatsapp',
