@@ -113,4 +113,24 @@ class UsersController extends BaseApiController
 
         return $this->ok($user);
     }
+
+    #[OA\Delete(
+        path: '/users/{id}',
+        summary: 'Permanently remove a user',
+        tags: ['Users'],
+        security: [['bearerAuth' => []]],
+        parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        responses: [
+            new OA\Response(response: 200, description: 'User removed'),
+            new OA\Response(response: 403, description: 'FORBIDDEN_ROLE — e.g. removing your own account', content: new OA\JsonContent(ref: '#/components/schemas/ErrorEnvelope')),
+            new OA\Response(response: 404, description: 'USER_NOT_FOUND', content: new OA\JsonContent(ref: '#/components/schemas/ErrorEnvelope')),
+            new OA\Response(response: 409, description: 'USER_HAS_CONTENT — owns companies/contacts/leads/deals/tasks/activities', content: new OA\JsonContent(ref: '#/components/schemas/ErrorEnvelope')),
+        ],
+    )]
+    public function delete($id)
+    {
+        $this->auth->deleteUser((int) $id, $this->authUser());
+
+        return $this->ok(['message' => 'User removed.']);
+    }
 }

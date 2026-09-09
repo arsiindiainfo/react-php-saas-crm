@@ -4,9 +4,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useToast } from '@/components/Toast'
 import { Pill } from '@/components/Pill'
+import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { ApiError } from '@/types/api'
 import { USER_ROLES } from '@shared/constants'
-import { useInviteUser, useUpdateUser, useUsers } from './api'
+import type { User } from '@/types/entities'
+import { useDeleteUser, useInviteUser, useUpdateUser, useUsers } from './api'
 
 const schema = z.object({
   name: z.string().min(2).max(120),
@@ -29,7 +31,9 @@ export function UsersPage() {
   const { data: users } = useUsers()
   const inviteUser = useInviteUser()
   const updateUser = useUpdateUser()
+  const deleteUser = useDeleteUser()
   const [isInviting, setIsInviting] = useState(false)
+  const [removingUser, setRemovingUser] = useState<User | null>(null)
 
   const managers = (users ?? []).filter((u) => u.role === 'SALES_MANAGER' || u.role === 'ADMIN')
 
@@ -149,8 +153,11 @@ export function UsersPage() {
                   <Pill value={u.status} />
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <button onClick={() => toggleStatus(u.id, u.status)} className="text-xs font-semibold text-indigo-600">
+                  <button onClick={() => toggleStatus(u.id, u.status)} className="mr-3 text-xs font-semibold text-indigo-600">
                     {u.status === 'ACTIVE' ? 'Disable' : 'Activate'}
+                  </button>
+                  <button onClick={() => setRemovingUser(u)} className="text-xs font-semibold text-red-600">
+                    Remove
                   </button>
                 </td>
               </tr>
@@ -158,6 +165,29 @@ export function UsersPage() {
           </tbody>
         </table>
       </div>
+
+      <ConfirmDialog
+        isOpen={removingUser !== null}
+        title={`Remove ${removingUser?.name ?? 'this user'}?`}
+        description="This permanently deletes the account and cannot be undone. Users who own companies, contacts, leads, deals, tasks or activities cannot be removed — reassign or remove those first."
+        confirmLabel="Remove"
+        danger
+        onCancel={() => setRemovingUser(null)}
+        onConfirm={() => {
+          if (!removingUser) return
+          deleteUser.mutate(removingUser.id, {
+            onSuccess: () => {
+              notify('User removed')
+              setRemovingUser(null)
+            },
+            onError: (err: unknown) => {
+              notify(err instanceof ApiError ? err.message : 'Could not remove this user.', 'error')
+              setRemovingUser(null)
+            },
+          })
+        }}
+        isSubmitting={deleteUser.isPending}
+      />
     </div>
   )
 }

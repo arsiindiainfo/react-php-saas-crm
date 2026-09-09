@@ -56,6 +56,20 @@ class UserModel extends Model
     }
 
     /**
+     * @return array{statusCode:string,message:string}
+     */
+    public function deleteUser(int $userId, int $actingAdminId): array
+    {
+        $this->db->query('CALL sp_user_delete(?, ?, @o_status, @o_message)', [$userId, $actingAdminId]);
+        $row = $this->db->query('SELECT @o_status AS statusCode, @o_message AS message')->getRowArray();
+
+        return [
+            'statusCode' => $row['statusCode'],
+            'message'    => $row['message'],
+        ];
+    }
+
+    /**
      * All user ids reporting (directly) to the given manager.
      *
      * @return list<int>

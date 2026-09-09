@@ -26,6 +26,7 @@ $routes->group(
             $routes->get('/', 'UsersController::index');
             $routes->post('/', 'UsersController::create');
             $routes->put('(:num)', 'UsersController::update/$1');
+            $routes->delete('(:num)', 'UsersController::delete/$1');
         });
 
         $routes->group('companies', static function ($routes): void {
