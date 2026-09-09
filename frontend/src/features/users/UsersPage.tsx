@@ -12,7 +12,13 @@ const schema = z.object({
   name: z.string().min(2).max(120),
   email: z.email(),
   role: z.enum(USER_ROLES),
-  managerId: z.coerce.number().optional(),
+  managerId: z.preprocess(
+    // The <select> defaults to '' when hidden/unselected — z.coerce.number()
+    // turns '' into 0, not undefined, which then hits the manager_id foreign
+    // key with a nonexistent id 0 on ADMIN/SALES_MANAGER invites.
+    (val) => (val === '' ? undefined : val),
+    z.coerce.number().optional(),
+  ),
 })
 type FormInput = z.input<typeof schema>
 type FormValues = z.output<typeof schema>

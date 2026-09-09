@@ -63,7 +63,10 @@ class UsersController extends BaseApiController
             $data['name'],
             $data['email'],
             $data['role'],
-            $data['managerId'] ?? null,
+            // 0 isn't a valid user id — a falsy managerId means "no manager",
+            // same as it being absent. Passing 0 through hits manager_id's
+            // foreign key with a nonexistent row and fails as a generic DB error.
+            ! empty($data['managerId']) ? $data['managerId'] : null,
             $this->authUser()->id,
         );
 
@@ -102,7 +105,8 @@ class UsersController extends BaseApiController
             $fields['status'] = $data['status'];
         }
         if (isset($data['managerId'])) {
-            $fields['manager_id'] = $data['managerId'];
+            // Same 0-vs-null guard as create() above.
+            $fields['manager_id'] = ! empty($data['managerId']) ? $data['managerId'] : null;
         }
 
         $user = $this->auth->updateUser((int) $id, $fields, $this->authUser());
