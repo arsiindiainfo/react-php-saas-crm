@@ -8,7 +8,9 @@ use App\Exceptions\DuplicateNameException;
 use App\Exceptions\ForbiddenRoleException;
 use App\Exceptions\RecordNotFoundException;
 use App\Exceptions\UnauthorizedException;
+use App\Libraries\EmailTemplate;
 use App\Libraries\JwtService;
+use App\Libraries\ResendMailer;
 use App\Models\RefreshTokenModel;
 use App\Models\UserModel;
 use Config\Crm;
@@ -100,8 +102,8 @@ class AuthService
             throw new ApiException('Unknown role.', 400, 'VALIDATION_ERROR');
         }
 
-        // temporary random password; a real product would email a set-password link via Mailhog
-        $passwordHash = password_hash(bin2hex(random_bytes(8)), PASSWORD_BCRYPT);
+        $temporaryPassword = bin2hex(random_bytes(8));
+        $passwordHash      = password_hash($temporaryPassword, PASSWORD_BCRYPT);
 
         $result = $this->users->invite($name, $email, $passwordHash, $role, $managerId, $invitedBy);
 
@@ -117,10 +119,27 @@ class AuthService
             throw new ApiException($result['message'], 500, 'INTERNAL_ERROR');
         }
 
+        $this->sendInviteEmail($name, $email, $temporaryPassword);
+
         /** @var User $user */
         $user = $this->users->find($result['userId']);
 
         return $user;
+    }
+
+    // Delivery failure should not block the invite itself succeeding — the
+    // inviting ADMIN can still relay the temporary password out-of-band.
+    private function sendInviteEmail(string $name, string $email, string $temporaryPassword): void
+    {
+        $html = EmailTemplate::renderInvite($name, $email, $temporaryPassword);
+
+        try {
+            if (! (new ResendMailer())->send($email, 'Your Arsi CRM account', $html)) {
+                log_message('error', 'Failed to send invite email to ' . $email);
+            }
+        } catch (\Throwable $e) {
+            log_message('error', 'Failed to send invite email: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -155,5 +174,26 @@ class AuthService
         $updated = $this->users->find($userId);
 
         return $updated;
+    }
+
+    public function deleteUser(int $userId, User $actingAdmin): void
+    {
+        $result = $this->users->deleteUser($userId, $actingAdmin->id);
+
+        if ($result['statusCode'] === 'USER_NOT_FOUND') {
+            throw new RecordNotFoundException('user', 'USER_NOT_FOUND');
+        }
+
+        if ($result['statusCode'] === 'FORBIDDEN_ROLE') {
+            throw new ForbiddenRoleException($result['message']);
+        }
+
+        if ($result['statusCode'] === 'USER_HAS_CONTENT') {
+            throw new ApiException($result['message'], 409, 'USER_HAS_CONTENT');
+        }
+
+        if ($result['statusCode'] !== 'OK') {
+            throw new ApiException($result['message'], 500, 'INTERNAL_ERROR');
+        }
     }
 }
